@@ -1,0 +1,10 @@
+#!/bin/bash
+
+a=$(wget -O - http://ip.tupeux.com | tail)
+
+if [[ $a -eq "" ]]; then
+    echo No Address
+else
+    echo $a
+fi
+

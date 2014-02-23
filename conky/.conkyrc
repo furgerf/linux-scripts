@@ -1,0 +1,118 @@
+background yes
+use_xft yes
+xftfont DejaVuSansCondensed:size=8
+update_interval 2
+total_run_times 0
+own_window yes
+own_window_type override
+own_window_argb_visual yes
+own_window_argb_value 180
+double_buffer yes
+#own_window_argb_visual true
+#own_window_argb_value 100
+#own_window_type desktop 
+
+maximum_width 320
+draw_shades no
+draw_outline no 
+draw_borders no
+draw_graph_borders no
+default_color grey
+default_shade_color red
+default_outline_color green
+alignment top_left
+gap_x 1275
+gap_y 21
+text_buffer_size 512
+ 
+no_buffers yes
+uppercase no
+cpu_avg_samples 2
+net_avg_samples 2
+use_spacer none
+short_units yes
+
+# from weather stuff...
+override_utf8_locale yes
+imlib_cache_size 0
+
+color0 4d79ff
+
+TEXT
+${texeci 1800 bash $HOME/1b2_accuweather_conkyweather_font/1b2}${alignc 32}${font Open Sans:size=20}arch${color0}linux$font$color
+${alignc 8}${font Open Sans:size=10}${exec whoami}@$nodename
+# SYS
+${font Open Sans:Bold:size=10}${color0}SYSTEM${hr 2}$color${font}
+$sysname $kernel ($machine) $alignr Running for $alignr$uptime_short
+Temperature / Fan $alignr ${execpi 30 $HOME/scripts/conky/conkycolor 0xbebebe 0xff0000 36 103 "sensors | grep 'temp1:' | cut -c16-17 | sed -n '1p'"}°$color / ${execi 60 sensors | grep 'fan1:' | cut -c14-18}RPM
+# CPU
+${font Open Sans:Bold:size=10}${color0}CPU${hr 2}$color${font}
+Intel i7 3520M${goto 120}${font Open Sans:Bold:size=8}${freq_g cpu0}GHz, ${cpu cpu0}%$font$alignr${execi 300 cpupower frequency-info -g | sed -n '2p' | cut -c12-}
+#${cpugauge cpu0 20, 40}${goto 64}
+${cpugraph cpu0 20, 316 000000 ffffff -t}
+# NETWORK
+${font Open Sans:Bold:size=10}${color0}NETWORK${hr 2}$color$font
+${font Open Sans:Bold:size=8}WAN$font${goto 80}${execi 3600 $HOME/scripts/conky/get_wan}
+${font Open Sans:Bold:size=8}enp0s25$font${goto 80}${addr enp0s25}$alignr${downspeedf enp0s25} kbps (${totaldown enp0s25})
+${font Open Sans:Bold:size=8}wlp3s0$font${goto 80}${addr wlp3s0} (${wireless_link_qual wlp3s0}%)$alignr${downspeedf wlp3s0} kbps (${totaldown wlp3s0})
+${downspeedgraph enp0s25 20, 316 000000 ffffff -t}
+${voffset -33}${downspeedgraph wlp3s0 20, 320 000000 ffffff -t}
+# MEMORY
+${font Open Sans:Bold:size=10}${color0}MEMORY${hr 2}$color${font}
+${font Open Sans:bold:size=8}RAM:$font${goto 60}${mem}${goto 92}/ ${memmax}${goto 130}(${memperc}%)${goto 162}${membar}
+# HDD
+${font Open Sans:bold:size=8}ROOT:$font ${goto 60}${fs_used /} ${goto 92}/ ${fs_size /}${goto 130}(${fs_used_perc /}%)${goto 162}${fs_bar /}
+${font Open Sans:bold:size=8}DATEN:$font ${goto 60}${fs_used /daten} ${goto 92}/ ${fs_size /daten}${goto 130}(${fs_used_perc /daten}%)${goto 162}${fs_bar /daten}
+${font Open Sans:bold:size=8}SHARED:$font ${goto 60}${fs_used /shared} ${goto 92}/ ${fs_size /shared}${goto 130}(${fs_used_perc /shared}%)${goto 162}${fs_bar /shared}
+# WEATHER
+${font Open Sans:Bold:size=10}${color0}WEATHER${font Open Sans:size=6}(${execi 1800 stat -c %y $HOME/1b2_accuweather_conkyweather_font/curr_cond | cut -d' ' -f2 | cut -d: -f1-2})${hr 2}$font$color
+${font conkyweather:size=60}${execi 1800  sed -n '27p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}${font} ${voffset -76}
+$alignr${execi 1800 sed -n '28p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}, ${execi 1800 sed -n '29p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}\
+°C (feels like ${execi 1800 sed -n '30p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}°C)
+$alignr Sun: ${execi 1800 sed -n '39p' $HOME/1b2_accuweather_conkyweather_font/curr_cond} - ${execi 1800 sed -n '40p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}
+$alignr Clouds: ${execi 1800 sed -n '35p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}, UV: ${execi 1800 sed -n '36p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}
+$alignr Humidity: ${execi 1800 sed -n '33p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}, Visibility: ${execi 1800 sed -n '38p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}
+$alignr Wind: ${execi 1800 sed -n '32p' $HOME/1b2_accuweather_conkyweather_font/curr_cond} (${execi 1800 sed -n '31p' $HOME/1b2_accuweather_conkyweather_font/curr_cond})
+${hr 1}
+${font conkyweather:size=20}${execi 1800 sed -n '25p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
+${voffset -26} ${goto 50} ${font Open Sans:size=10:Bold}Today$font $alignr${execi 1800 sed -n '26p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
+°C (feels like ${execi 1800 sed -n '27p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C), Percip: ${execi 1800 sed -n '28p' $HOME/1b2_accuweather_conkyweather_font/first_days} 
+${font Open Sans:size=7} $alignr ${execi 1800 sed -n '29p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
+${hr 1}
+${font conkyweather:size=20}${execi 1800 sed -n '30p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
+${voffset -26} ${goto 50} ${font Open Sans:size=10:Bold}Tonight$font $alignr${execi 1800 sed -n '31p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
+°C (feels like ${execi 1800 sed -n '32p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C), Percip: ${execi 1800 sed -n '33p' $HOME/1b2_accuweather_conkyweather_font/first_days} 
+${font Open Sans:size=7}$alignr${execi 1800 sed -n '34p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
+${hr 1}
+${execi 1800 sed -n '5p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
+${execi 1800 sed -n '9p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '8p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
+°C ${goto 90}${execi 1800 sed -n '10p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
+${execi 1800 sed -n '14p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '13p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
+°C${goto 180}${execi 1800 sed -n '15p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
+${execi 1800 sed -n '19p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '18p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
+°C$alignr${execi 1800 sed -n '20p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
+${execi 1800 sed -n '24p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '23p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C
+${font conkyweather:size=20}${goto 25}${execi 1800 sed -n '6p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 105}${execi 1800 sed -n '11p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 195}\
+${execi 1800 sed -n '16p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 280}\
+${execi 1800 sed -n '21p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
+# MUSIC
+${font Open Sans:Bold:size=10}${color0}MUSIC${hr 2}$font$color
+${execpi 5 $HOME/scripts/conky/clementine-dbus}
+# APPOINTMENTS
+${font Open Sans:Bold:size=10}${color0}APPOINTMENTS${hr 2}$font$color
+# this order because Privat and Arbeit set a reasonable range of time, Squash narrows it down further so that HSLU doesnt need to read so many timetable entries
+${execpi 7200 $HOME/scripts/conky/google_calendar.lua Privat Arbeit Squash HSLU}
+# TODO
+${font Open Sans:Bold:size=10}${color0}TODO${hr 2}$font$color
+${execi 900 cat -n $HOME/.todo}
+
+
+
+
+
+
+
+
+
+
+
