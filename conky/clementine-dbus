@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# find out whether clementine is running
+running=`dbus-send --session --dest=org.freedesktop.DBus --type=method_call --print-reply /org/freedesktop/DBus org.freedesktop.DBus.ListNames | grep clementine`
+if [ "$running" == "" ]; then    
+    printf '\n\n${alignc}Clementine is not running\n\n\n'
+    exit 0
+fi
+
+# read dbus
+data=`qdbus org.mpris.clementine /Player org.freedesktop.MediaPlayer.GetMetadata`
+stat=`qdbus --literal org.mpris.clementine /Player org.freedesktop.MediaPlayer.GetStatus | cut -b 19`
+pos=`qdbus org.mpris.clementine /Player org.freedesktop.MediaPlayer.PositionGet`
+
+if [ "$data" == "" ]; then
+    printf '\n\n${alignc}Playback not started\n\n\n'
+else
+    # format times
+    sec=$(($pos / 1000))
+    min=$(($sec / 60))
+    sec=$(($sec - 60 * $min))
+    if [ $sec -lt 10 ]; then
+        zero=0
+    fi
+    forpos=$min':'$zero$sec
+    zero=''
+    sec=`eval 'echo "$data" | grep "mtime: " | cut -b 8-'`
+    posperc=$(($pos * 100 / $sec))
+    sec=$(($sec / 1000))
+    min=$(($sec / 60))
+    sec=$(($sec - 60 * $min))
+    if [ $sec -lt 10 ]; then
+        zero=0
+    fi
+    fortime=$min':'$zero$sec
+    
+    if [ $stat -eq 0 ]; then
+        begin='${font Open Sans:bold:size=8}'
+        end='${font}'
+    fi
+
+    # artist
+    echo -n '${goto 74}Artist:${goto 114}'$begin
+    echo -n "$data" | grep 'artist: ' | cut -b 9-
+
+    # title
+    echo -n $end'${goto 74}Title:${goto 114}'$begin
+    echo -n "$data" | grep 'title: ' | cut -b 8-
+
+    # title
+    echo -n $end'${goto 74}Album:${goto 114}'$begin
+    echo -n "$data" | grep 'album: ' | cut -b 8-
+
+    if [ $stat -eq 0 ]; then
+        # time
+        echo -n $end'${goto 74}Time:${goto 114}'$begin
+        echo $forpos' / '$fortime$end
+
+        # progressbar
+        echo -n '${goto 74}${execbar echo '"$posperc"'}'
+    else
+        printf '\n${alignc}PAUSED'
+    fi
+
+    # cover
+    # ensure proper cover is loaded during first 9 seconds of track
+    if [ $pos -lt 9000 ]; then
+        pic=`eval 'echo "$data" | grep "arturl: " | cut -b 16-'`
+        `cp $pic '/tmp/cover.jpg'`
+    fi
+    echo -n '${image /tmp/cover.jpg -p 0,547 -s 62x62 -n}'
+fi
+
