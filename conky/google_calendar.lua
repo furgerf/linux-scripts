@@ -15,6 +15,8 @@ function string:split( inSplitPattern, outResults )
    return outResults
 end
 
+local data_path = string.sub(arg[0], 0, -5) .. "_data"
+
 local dateformat = "(%a+) (%d+) (%d+):(%d+)" 
 local months = { Jan = 1, Feb = 2, Mar = 3, Apr = 4, May = 5, Jun = 6, Jul = 7, Aug = 8, Sep = 9, Oct = 10, Nov = 11, Dec = 12 }
 
@@ -103,7 +105,7 @@ end
 
 -- if no new data was found (offline?), print last data
 if (lowest == nil) then
-    local oldhandle = io.open("google_calendar_data", "r")
+    local oldhandle = io.open(data_path, "r")
     if (oldhandle ~= nil) then
         local d = oldhandle:read("*a")
         --print("old data")
@@ -128,7 +130,7 @@ finaldata = finaldata .. "\n" .. apps[highest][2] .. "${goto 130}" .. apps[highe
 
 print(finaldata)
 
-local lasthandle = io.open("google_calendar_data", "w")
+local lasthandle = io.open(data_path, "w")
 lasthandle:write("* " .. string.gsub(finaldata, "\n", "\n* ") .. "\n")
 lasthandle:close()
 
