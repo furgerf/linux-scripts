@@ -1,0 +1,17 @@
+#!/bin/bash
+
+IN="LVDS1"
+EXT="VGA1"
+
+if (xrandr | grep "$EXT disconnected"); then
+    xrandr --output $EXT --off 
+else
+    # gets info of second enabled monitor
+    SND=$(xrandr | grep "\*"| sed -n '2p')
+    
+    if [[ "$SND" = "" ]]; then
+        xrandr --output $IN --auto --primary --output $EXT --auto --pos 1602x0
+    else
+        xrandr --output $EXT --off
+    fi
+fi

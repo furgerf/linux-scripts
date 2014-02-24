@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#b=`cat /sys/class/backlight/acpi_video0/brightness`
+on_ac_power
+if [ $? -eq 0 ]; then
+    xbacklight -set 100
+else
+    xbacklight -set 40
+fi
+
