@@ -63,6 +63,18 @@ for i,v in ipairs(arg) do
         if (time >= now) then
             -- if we have less than 3 appointments, add it
             if (count < 3) then
+                -- if another appointment at the same time exists, increment time by 1
+                local time_present = false
+                for t,d in pairs(apps) do
+                    if (t == time) then
+                        time_present = true
+                        break
+                    end
+                end
+                if (time_present) then
+                    time = time + 1
+                end
+                
                 apps[time] = { v, line[1], line[2] }
                 count = count + 1
             else
@@ -74,10 +86,22 @@ for i,v in ipairs(arg) do
                         oldest_key = t
                     end
                 end
-    
+                
                 if (time < oldest_key) then
                     -- later appointment found, replace it
                     apps[oldest_key] = nil
+                   
+                    -- if another appointment at the same time exists, increment time by 1
+                    local time_present = false
+                    for t,d in pairs(apps) do
+                        if (t == time) then
+                            time_present = true
+                            break
+                        end
+                    end
+                    if (time_present) then
+                        time = time + 1
+                    end
                     apps[time] = { v, line[1], line[2] }
                 else
                     -- we will only get older events, break loop
