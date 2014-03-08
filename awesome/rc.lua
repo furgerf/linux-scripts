@@ -166,7 +166,7 @@ shifty.config.apps = {
         },
         tag = "2:web",
         screen = 2,
-        geometry= { 0, 16, 1600, 884 },
+        maximized = true,
     },
     {
         match = {
@@ -184,6 +184,13 @@ shifty.config.apps = {
         },
         tag = "3:doc",
         screen = 2,
+    },
+    {
+        match = {
+            class = { "bashrun2-run-dialog",
+                    "bashrun", "XTerm" },
+        },
+        float = true,
     },
     {
         match = {
@@ -574,7 +581,8 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86MonBrightnessDown", function ()
        awful.util.spawn("xbacklight -dec 10") end),
     awful.key({ }, "XF86ScreenSaver", function ()
-       awful.util.spawn_with_shell("sleep 1 && xset dpms force off") end),
+       awful.util.spawn("xscreensaver-command --lock") end),
+       --awful.util.spawn_with_shell("sleep 1 && xset dpms force off") end),
     awful.key({ }, "XF86AudioRaiseVolume", function ()
        awful.util.spawn("amixer sset Master unmute")
        awful.util.spawn("amixer set Master 3%+") end),
@@ -588,6 +596,8 @@ globalkeys = awful.util.table.join(
               "scrot -e 'mv $f ~/Images'") end),
     awful.key({ }, "XF86Display", function ()
        awful.util.spawn(os.getenv("HOME") .. "/scripts/monitor") end),
+    awful.key({ }, "XF86WakeUp", function ()
+        awful.util.spawn("xscreensaver-command --lock") end),
 
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),
@@ -638,7 +648,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey }, "e",      function () awful.util.spawn("thunar") end),
     awful.key({ modkey }, "q",      function () menubar.show() end),
-    awful.key({ modkey }, "r",      function () mypromptbox[mouse.screen]:run() end),  
+    --awful.key({ modkey }, "r",      function () mypromptbox[mouse.screen]:run() end),  
+    awful.key({ modkey }, "r",      function () awful.util.spawn("bashrun2") end),
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
