@@ -29,5 +29,26 @@ awesome
 Configuration file for awesome.
 
 
+Other
+-----
+
+### backlight
+Checks AC connection and sets backlight accordingly. Used in .xinitrc.
+
+### ilias-connect
+After a delay, connects to ilias webfolders. Used in .xinitrc.
+
+### logcat
+Calls logcat-colorize with parameters (like path to adb logcat).
+
+### logcat-colorize
+Adjusted and compiled from someone else. Called by logcat.
+
+### monitor
+Uses xrandr to toggle secondary monitor. Mapped to key.
+
+
+
+
 Contact: mystyfly@gmail.com
 
