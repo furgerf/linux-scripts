@@ -101,7 +101,7 @@ ${execpi 5 $HOME/scripts/conky/clementine-dbus}
 # APPOINTMENTS
 ${font Open Sans:Bold:size=10}${color0}APPOINTMENTS${hr 2}$font$color
 # this order because Privat and Arbeit set a reasonable range of time, Squash narrows it down further so that HSLU doesnt need to read so many timetable entries
-${execpi 7200 $HOME/scripts/conky/google_calendar.lua Privat Arbeit Squash HSLU}
+${execpi 3600 $HOME/scripts/conky/google_calendar.lua Privat Arbeit Squash HSLU}
 # TODO
 ${font Open Sans:Bold:size=10}${color0}TODO${hr 2}$font$color
 ${execi 900 cat -n $HOME/.todo}

@@ -123,18 +123,21 @@ shifty.config.tags = {
         nopopup     = true,
         leave_kills = true,
         spawn       = "firefox",
+        screen = math.min(screen.count(), 2),
      },
     ["3:doc"] = {
         layout      = awful.layout.suit.fair,
         position    = 3,
         nopopup     = true,
         leave_kills = true,
+        screen = math.min(screen.count(), 2),
     },
     ["4:code"] = {
         layout      = awful.layout.suit.max.fullscreen,
         position    = 4,
         nopopup     = true,
         leave_kills = true,
+        screen = math.min(screen.count(), 2),
     },
     ["5:media"] = {
         layout      = awful.layout.suit.floating,
@@ -157,6 +160,7 @@ shifty.config.tags = {
     ["gimp"] = {
         layout      = awful.layout.suit.floating,
         leave_kills = true,
+        screen = math.min(screen.count(), 2),
     },
 }
 shifty.config.apps = {
@@ -165,8 +169,8 @@ shifty.config.apps = {
             class = { "Firefox" },
         },
         tag = "2:web",
-        screen = 2,
-        maximized = true,
+        screen = math.min(screen.count(), 2),
+        dockable = true,
     },
     {
         match = {
@@ -183,7 +187,7 @@ shifty.config.apps = {
             },
         },
         tag = "3:doc",
-        screen = 2,
+        screen = math.min(screen.count(), 2),
     },
     {
         match = {
@@ -197,7 +201,7 @@ shifty.config.apps = {
             class = { "Eclipse", },
         },
         tag = "4:code",
-        screen = 2,
+        screen = math.min(screen.count(), 2),
         --run = function () awful.util.spawn("./$HOME/scripts/logcat"),
     },
     {
@@ -208,7 +212,6 @@ shifty.config.apps = {
             },
         },
         tag = "5:media",
-        screen = 2,
     },
     {
         match = {
@@ -229,7 +232,7 @@ shifty.config.apps = {
             "Gimp",
         },
         tag = "gimp",
-        screen = 2,
+        screen = math.min(screen.count(), 2),
         slave = true,
     },
     {
@@ -237,7 +240,7 @@ shifty.config.apps = {
             "gimp%-image%-window",
         },
         slave = true,
-        screen = 2,
+        screen = math.min(screen.count(), 2),
     },
     {
         match = {
@@ -581,8 +584,7 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86MonBrightnessDown", function ()
        awful.util.spawn("xbacklight -dec 10") end),
     awful.key({ }, "XF86ScreenSaver", function ()
-       awful.util.spawn("xscreensaver-command --lock") end),
-       --awful.util.spawn_with_shell("sleep 1 && xset dpms force off") end),
+       awful.util.spawn("slock") end),
     awful.key({ }, "XF86AudioRaiseVolume", function ()
        awful.util.spawn("amixer sset Master unmute")
        awful.util.spawn("amixer set Master 3%+") end),
@@ -592,12 +594,11 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioMute", function ()
        awful.util.spawn("amixer sset Master toggle") end),
     awful.key({ }, "Print", function ()
-              awful.util.spawn(
-              "scrot -e 'mv $f ~/Images'") end),
+              awful.util.spawn("scrot -e 'mv $f ~/Images'") end),
     awful.key({ }, "XF86Display", function ()
        awful.util.spawn(os.getenv("HOME") .. "/scripts/monitor") end),
-    awful.key({ }, "XF86WakeUp", function ()
-        awful.util.spawn("xscreensaver-command --lock") end),
+    awful.key({ }, "XF86Sleep", function ()
+        awful.util.spawn("slock") end),
 
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),
