@@ -31,7 +31,7 @@ local count = 0
 for i,v in ipairs(arg) do
     -- read calendar data
     local handle = 0
-    if (count > 2) then
+    if (count > 4) then
         local oldest_key = 0
         for t,d in pairs(apps) do
             if (oldest_key < t) then
@@ -62,7 +62,7 @@ for i,v in ipairs(arg) do
         -- appointment is only interesting if it's not in the past
         if (time >= now) then
             -- if we have less than 3 appointments, add it
-            if (count < 3) then
+            if (count < 5) then
                 -- if another appointment at the same time exists, increment time by 1
                 local time_present = false
                 for t,d in pairs(apps) do
@@ -139,17 +139,33 @@ if (lowest == nil) then
     return
 end
 
--- first appointment
+-- find 2nd first and 2nd last appointment
+local secondlowest = nil
+local secondhighest = 0
+for k,v in pairs(apps) do
+    if (k ~= highest and secondhighest < k) then
+        secondhighest = k
+    end
+
+    if (lowest ~= k and (secondlowest == nil or secondlowest > k)) then
+        secondlowest = k
+    end
+end
+
+-- first 2 appointments
 local finaldata = apps[lowest][2] .. "${goto 130}" .. apps[lowest][1] .. "${alignr}" .. apps[lowest][3]
+finaldata = finaldata .. "\n" .. apps[secondlowest][2] .. "${goto 130}" .. apps[secondlowest][1] .. "${alignr}" .. apps[secondlowest][3]
+
 -- find and add middle appointment
 for k,v in pairs(apps) do
-    if (k ~= highest and k ~= lowest) then
+    if (k ~= highest and k ~= lowest and k ~= secondhighest and k ~= secondlowest) then
         finaldata = finaldata .. "\n" .. apps[k][2] .. "${goto 130}" .. apps[k][1] .. "${alignr}" .. apps[k][3]
         break
     end
 end
 
--- add last appointment
+-- add last 2 appointments
+finaldata = finaldata .. "\n" .. apps[secondhighest][2] .. "${goto 130}" .. apps[secondhighest][1] .. "${alignr}" .. apps[secondhighest][3]
 finaldata = finaldata .. "\n" .. apps[highest][2] .. "${goto 130}" .. apps[highest][1] .. "${alignr}" .. apps[highest][3]
 
 print(finaldata)
