@@ -3,7 +3,6 @@
 # find out whether clementine is running
 running=`dbus-send --session --dest=org.freedesktop.DBus --type=method_call --print-reply /org/freedesktop/DBus org.freedesktop.DBus.ListNames | grep clementine`
 if [ "$running" == "" ]; then    
-    printf '\n\n${alignc}Clementine is not running\n\n\n'
     exit 0
 fi
 
@@ -12,9 +11,10 @@ data=`qdbus org.mpris.clementine /Player org.freedesktop.MediaPlayer.GetMetadata
 stat=`qdbus --literal org.mpris.clementine /Player org.freedesktop.MediaPlayer.GetStatus | cut -b 19`
 pos=`qdbus org.mpris.clementine /Player org.freedesktop.MediaPlayer.PositionGet`
 
-if [ "$data" == "" ]; then
-    printf '\n\n${alignc}Playback not started\n\n\n'
-else
+if [ "$data" != "" ]; then
+    # print header
+    echo '${font Open Sans:Bold:size=10}${color0}MUSIC${hr 2}$font$color'
+    
     # format times
     sec=$(($pos / 1000))
     min=$(($sec / 60))

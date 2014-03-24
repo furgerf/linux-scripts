@@ -96,7 +96,6 @@ ${font conkyweather:size=20}${goto 25}${execi 1800 sed -n '6p' $HOME/1b2_accuwea
 ${execi 1800 sed -n '16p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 280}\
 ${execi 1800 sed -n '21p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
 # MUSIC
-${font Open Sans:Bold:size=10}${color0}MUSIC${hr 2}$font$color
 ${execpi 5 $HOME/scripts/conky/clementine-dbus}
 # APPOINTMENTS
 ${font Open Sans:Bold:size=10}${color0}APPOINTMENTS${hr 2}$font$color
