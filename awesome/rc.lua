@@ -111,33 +111,40 @@ end
 
 -- {{{ Tags
 shifty.config.tags = {
+    ["~"] = {
+        layout      = awful.layout.suit.fair,
+        position    = 1,
+        init        = true,
+        screen      = 2,
+    },
     ["foo"] = {
         layout      = awful.layout.suit.tile.bottom,
         position    = 1,
         init        = true,
         mwfact      = 0.7,
+        screen      = 1,
     },
     ["2:web"] = {
         layout      = awful.layout.suit.floating,
         position    = 2,
         nopopup     = true,
         leave_kills = true,
-        spawn       = "firefox",
-        screen = math.min(screen.count(), 2),
+        spawn       = "ps aux | grep [f]irefox ; if [[ $? -eq 0 ]] ; then firefox ; fi",
+        screen      = screen.count(),
      },
     ["3:doc"] = {
         layout      = awful.layout.suit.fair,
         position    = 3,
         nopopup     = true,
         leave_kills = true,
-        screen = math.min(screen.count(), 2),
+        screen      = screen.count(),
     },
     ["4:code"] = {
         layout      = awful.layout.suit.max.fullscreen,
         position    = 4,
         nopopup     = true,
         leave_kills = true,
-        screen = math.min(screen.count(), 2),
+        screen      = screen.count(),
     },
     ["5:media"] = {
         layout      = awful.layout.suit.floating,
@@ -151,16 +158,18 @@ shifty.config.tags = {
         position    = 6,
         nopopup     = true,
         leave_kills = true,
+        screen      = 1,
     },
     ["bar"] = {
         layout      = awful.layout.suit.fair,
         position    = 7,
         init        = true,
+        screen      = 1,
     },
     ["gimp"] = {
         layout      = awful.layout.suit.floating,
         leave_kills = true,
-        screen = math.min(screen.count(), 2),
+        screen = screen.count(),
     },
 }
 shifty.config.apps = {
@@ -169,6 +178,8 @@ shifty.config.apps = {
             class = { "Firefox" },
         },
         tag = "2:web",
+        --maximize_vertical = true,
+        --maximize_horizontal = true,
         screen = math.min(screen.count(), 2),
         dockable = true,
     },
@@ -584,7 +595,8 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86MonBrightnessDown", function ()
        awful.util.spawn("xbacklight -dec 10") end),
     awful.key({ }, "XF86ScreenSaver", function ()
-       awful.util.spawn("slock") end),
+       awful.util.spawn("slock")
+       awful.util.spawn("xset dpms force off")  end),
     awful.key({ }, "XF86AudioRaiseVolume", function ()
        awful.util.spawn("amixer sset Master unmute")
        awful.util.spawn("amixer set Master 3%+") end),
@@ -642,15 +654,11 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
    
     -- PROGRAMS
-    awful.key({ modkey, "Shift"   }, "Return", function ()
-                                                    awful.util.spawn(terminal)
-                                                    awful.client.setslave(awful.client.getmaster())
-                                               end),
     awful.key({ modkey }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey }, "e",      function () awful.util.spawn("thunar") end),
     awful.key({ modkey }, "q",      function () menubar.show() end),
     --awful.key({ modkey }, "r",      function () mypromptbox[mouse.screen]:run() end),  
-    awful.key({ modkey }, "r",      function () awful.util.spawn("bashrun2") end),
+    awful.key({ modkey }, "r",      function () awful.util.spawn("bashrun") end),
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
@@ -681,7 +689,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "o",      function () awful.screen.focus(mouse.screen % screen.count() + 1) end),      -- cycles through screens. note: screens are 1-based
     awful.key({ modkey,           }, "d",      function ()
                     info = true
-                    awful.prompt.run({ fg_cursor = "black", bg_cursor="orange", prompt = "<span color='#008DFA'>Translate:</span> " },
+                    awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>Translate:</span> " },
                     mypromptbox[mouse.screen].widget,
                     function (word)
                         local f = io.popen("dict -d wn " .. word .. " 2>&1")
@@ -690,8 +698,22 @@ globalkeys = awful.util.table.join(
                             fr = fr .. line .. '\n'
                         end
                         f:close()
---                        naughty.notify({ text = '<span font_desc="Sans 7">' .. fr .. '</span>', timeout = 0, width = 400 })
                         naughty.notify({ text = fr, timeout = 90, width = 400 })
+                    end, nil, awful.util.getdir("cache") .. "/dict")
+                end),
+
+   awful.key({ modkey,           }, "c",      function ()
+                    info = true
+                    awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>Calc:</span> " },
+                    mypromptbox[mouse.screen].widget,
+                    function (word)
+                        local f = io.popen("calc " .. word)
+                        local fr = word .. "="
+                        for line in f:lines() do
+                            fr = fr .. line
+                        end
+                        f:close()
+                        naughty.notify({ text = fr, timeout = 30})
                     end, nil, awful.util.getdir("cache") .. "/dict")
                 end),
 
@@ -711,7 +733,8 @@ clientkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
     awful.key({ modkey, "Shift"   }, "o",      awful.client.movetoscreen                        ),
-    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
+
+--    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
 --    awful.key({ modkey,           }, "n",
 --        function (c)
 --            -- The client currently has the input focus, so it cannot be
