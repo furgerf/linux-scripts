@@ -10,8 +10,8 @@ else
     SND=$(xrandr | grep "\*"| sed -n '2p')
     
     if [[ "$SND" = "" ]]; then
-        xrandr --output $IN --auto --primary --output $EXT --auto --pos 1602x0
+        xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --auto --pos 1602x0 --set "scaling mode" "Full aspect"
     else
-        xrandr --output $EXT --off
+        xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --off
     fi
 fi
