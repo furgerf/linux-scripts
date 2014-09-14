@@ -89,7 +89,7 @@ if [ "$data" != "" ]; then
             pic=`eval 'echo "$data" | grep "arturl: " | cut -b 16-'`
             `cp $pic '/tmp/cover.jpg'`
         fi
-        echo -n '${image /tmp/cover.jpg -p 0,556 -s 62x62 -n}'
+        echo -n '${image /tmp/cover.jpg -p 0,536 -s 62x62 -n}'
     fi
 fi
 

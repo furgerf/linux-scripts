@@ -39,7 +39,7 @@ imlib_cache_size 0
 color0 4d79ff
 
 TEXT
-${texeci 1800 bash $HOME/1b2_accuweather_conkyweather_font/1b2}${alignc 32}${font Open Sans:size=20}arch${color0}linux$font$color
+${execi 30 $HOME/git/linux-scripts/conky/switch_conky}${alignc 32}${font Open Sans:size=20}arch${color0}linux$font$color
 ${alignc 8}${font Open Sans:size=10}${exec whoami}@$nodename
 # SYS
 ${font Open Sans:Bold:size=10}${color0}SYSTEM${hr 2}$color${font}
@@ -63,7 +63,7 @@ ${font Open Sans:bold:size=8}RAM:$font${goto 60}${mem}${goto 92}/ ${memmax}${got
 ${font Open Sans:bold:size=8}ROOT:$font ${goto 60}${fs_used /} ${goto 92}/ ${fs_size /}${goto 130}(${fs_used_perc /}%)${goto 162}${fs_bar /}
 ${font Open Sans:bold:size=8}DATA:$font ${goto 60}${fs_used /data} ${goto 92}/ ${fs_size /data}${goto 130}(${fs_used_perc /data}%)${goto 162}${fs_bar /data}
 # WEATHER
-${font Open Sans:Bold:size=10}${color0}WEATHER${font Open Sans:size=6} (Lucerne, ${execi 1800 stat -c %y $HOME/1b2_accuweather_conkyweather_font/curr_cond | cut -d' ' -f2 | cut -d: -f1-2})${hr 2}$font$color
+${font Open Sans:Bold:size=10}${color0}WEATHER${font Open Sans:size=6}(${execi 1800 stat -c %y $HOME/1b2_accuweather_conkyweather_font/curr_cond | cut -d' ' -f2 | cut -d: -f1-2})${hr 2}$font$color
 ${font conkyweather:size=60}${execi 1800  sed -n '27p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}${font} ${voffset -76}
 $alignr${execi 1800 sed -n '28p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}, ${execi 1800 sed -n '29p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}\
 °C (feels like ${execi 1800 sed -n '30p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}°C)
@@ -98,8 +98,8 @@ ${execpi 5 $HOME/git/linux-scripts/conky/clementine-dbus}
 # APPOINTMENTS
 ${font Open Sans:Bold:size=10}${color0}APPOINTMENTS${hr 2}$font$color
 # this order because Privat and Arbeit set a reasonable range of time, Squash narrows it down further so that HSLU doesnt need to read so many timetable entries
-${execpi 1800 $HOME/git/linux-scripts/conky/google_calendar.lua Privat Arbeit Squash HSLU Running}
-# TODO
+${execp cat $HOME/git/linux-scripts/conky/google_calendar_data}
+# TODO:
 ${font Open Sans:Bold:size=10}${color0}TODO${hr 2}$font$color
 ${execi 600 cat -n $HOME/.todo}
 

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ ! -f kill_conky ]; then
+    `touch kill_conky`
+else
+    rm kill_conky
+    # kill -STOP $(pidof conky)
+    kill -KILL $(pidof conky)
+    # killall conky
+    `conky -c $HOME/git/linux-scripts/conky/.conkyrc`
+fi
+
