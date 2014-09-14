@@ -129,6 +129,7 @@ shifty.config.tags = {
         position    = 2,
         nopopup     = true,
         leave_kills = true,
+        --spawn       = "if [[ $(pidof firefox) -gt 0 ]] ; then firefox & ; fi",
         spawn       = "ps aux | grep [f]irefox ; if [[ $? -eq 0 ]] ; then firefox ; fi",
         screen      = screen.count(),
      },
@@ -151,7 +152,7 @@ shifty.config.tags = {
         position    = 5,
         leave_kills = true,
         nopopup     = true,
-        spawn       = terminal .. " --working-directory /daten/video",
+        spawn       = terminal .. " --working-directory /data/video",
     },
     ["6:d/l"] = {
         layout      = awful.layout.suit.tile.bottom,
@@ -213,7 +214,16 @@ shifty.config.apps = {
         },
         tag = "4:code",
         screen = math.min(screen.count(), 2),
-        --run = function () awful.util.spawn("./$HOME/scripts/logcat"),
+        --run = function () awful.util.spawn("./$HOME/git/linux-scripts/logcat"),
+    },
+    {
+        match = {
+            class = {
+                "Corebird",
+                "Chromium",
+            }
+        },
+        tag = "2:web",
     },
     {
         match = {
@@ -277,24 +287,22 @@ myconfigmenu = {
     { "xinit", editor_cmd .. " " .. os.getenv("HOME") .. "/.xinitrc" },
     { "bash", editor_cmd .. " " .. os.getenv("HOME") .. "/.bashrc" },
     { "awesome", editor_cmd .. " " .. awesome.conffile },
-    { "conky", editor_cmd .. " " .. os.getenv("HOME") .. "/scripts/conky/.conkyrc" },
+    { "conky", editor_cmd .. " " .. os.getenv("HOME") .. "/git/linux-scripts/conky/.conkyrc" },
     { "vim", editor_cmd .. " " .. os.getenv("HOME") .. "/.vimrc" },
 }
 myplacemenu = {
-    { "/daten", "thunar /daten" },
-    { "-> audio", "thunar /daten/audio" },
-    { "-> torrents", "thunar /daten/torrents" },
-    { "-> video", "thunar /daten/video" },
-    { "/shared", "thunar /shared" },
-    { "Dropbox", "thunar /daten/Dropbox" }
+    { "/data", "thunar /data" },
+    { "-> audio", "thunar /data/audio" },
+    { "-> torrents", "thunar /data/torrents" },
+    { "-> video", "thunar /data/video" },
+    { "Dropbox", "thunar /data/Dropbox" }
 }
 myplacestermmenu = {
-    { "/daten", terminal .. " --working-directory /daten" },
-    { "-> audio", terminal .. " --working-directory /daten/audio" },
-    { "-> torrents", terminal .. " --working-directory /daten/torrents" },
-    { "-> video", terminal .. " --working-directory /daten/video" },
-    { "/shared", terminal .. " --working-directory /shared" },
-    { "Dropbox", terminal .. " --working-directory /daten/Dropbox" }
+    { "/data", terminal .. " --working-directory /data" },
+    { "-> audio", terminal .. " --working-directory /data/audio" },
+    { "-> torrents", terminal .. " --working-directory /data/torrents" },
+    { "-> video", terminal .. " --working-directory /data/video" },
+    { "Dropbox", terminal .. " --working-directory /data/Dropbox" }
 }
 myawesomemenu = {
     { "manual", terminal .. " -x man awesome" },
@@ -605,13 +613,13 @@ globalkeys = awful.util.table.join(
        awful.util.spawn("amixer set Master 3%-") end),
     awful.key({ }, "XF86AudioMute", function ()
        awful.util.spawn("amixer sset Master toggle") end),
-    awful.key({ }, "Print", function ()
-              awful.util.spawn("scrot -e 'mv $f ~/Images'") end),
     awful.key({ }, "XF86Display", function ()
-       awful.util.spawn(os.getenv("HOME") .. "/scripts/monitor") end),
+       awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/monitor") end),
     awful.key({ }, "XF86Sleep", function ()
         awful.util.spawn("slock") end),
-
+    awful.key({ }, "Print", function ()
+        awful.util.spawn("scrot -e 'mv $f /data/image/Screenshots/ArchLinux'") end),
+    
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey, }, "Right",  awful.tag.viewnext       ),
@@ -628,7 +636,26 @@ globalkeys = awful.util.table.join(
             awful.client.focus.byidx(-1)
             if client.focus then client.focus:raise() end
         end),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end),
+     awful.key({ modkey,           }, "w",      function ()
+                    info = true
+                    awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>Wiki:</span> " },
+                    mypromptbox[mouse.screen].widget,
+                    function (word)
+                        awful.util.spawn("firefox -new-tab http://en.wikipedia.org/wiki/" .. word)
+                    end)
+                end),
+
+   awful.key({ modkey, "Shift"   }, "w",      function ()
+                    info = true
+                    awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>ArchWiki:</span> " },
+                    mypromptbox[mouse.screen].widget,
+                    function (word)
+                        awful.util.spawn("firefox -new-tab http://wiki.archlinux.org/index.php/" .. word)
+                    end)
+                end),
+
+    awful.key({ modkey, "Shift"   }, "q", function () mymainmenu:show() end),
+--awful.key({ modkey,           }, "w", function () mymainmenu:show() end),
 --    awful.key({ modkey, "Control" }, "n", awful.client.restore),
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
@@ -655,7 +682,7 @@ globalkeys = awful.util.table.join(
    
     -- PROGRAMS
     awful.key({ modkey }, "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ modkey }, "e",      function () awful.util.spawn("thunar") end),
+    awful.key({ modkey }, "e",      function () awful.util.spawn("thunar -- " .. os.getenv("HOME") .. "/Desktop") end),
     awful.key({ modkey }, "q",      function () menubar.show() end),
     --awful.key({ modkey }, "r",      function () mypromptbox[mouse.screen]:run() end),  
     awful.key({ modkey }, "r",      function () awful.util.spawn("bashrun") end),
@@ -689,7 +716,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "o",      function () awful.screen.focus(mouse.screen % screen.count() + 1) end),      -- cycles through screens. note: screens are 1-based
     awful.key({ modkey,           }, "d",      function ()
                     info = true
-                    awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>Translate:</span> " },
+                    awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>Define:</span> " },
                     mypromptbox[mouse.screen].widget,
                     function (word)
                         local f = io.popen("dict -d wn " .. word .. " 2>&1")
@@ -719,8 +746,8 @@ globalkeys = awful.util.table.join(
 
 
     -- awesome
-    awful.key({ modkey, "Control" }, "r",      awesome.restart),
-    awful.key({ modkey, "Shift"   }, "q",      awesome.quit)
+    awful.key({ modkey, "Control" }, "r",      awesome.restart)
+    --awful.key({ modkey, "Shift"   }, "q",      awesome.quit)
 )
 
 clientkeys = awful.util.table.join(
