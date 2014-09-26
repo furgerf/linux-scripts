@@ -6,6 +6,7 @@ local beautiful = require("beautiful")
 naughty = require("naughty")
 local menubar = require("menubar")
 local shifty = require("shifty")
+--local bashets = require("bashets")
 
 awful.rules = require("awful.rules")
 vicious = require("vicious")
@@ -115,12 +116,12 @@ shifty.config.tags = {
         layout      = awful.layout.suit.fair,
         position    = 1,
         init        = true,
-        screen      = 2,
+        --screen      = 2,
     },
     ["foo"] = {
         layout      = awful.layout.suit.tile.bottom,
-        position    = 1,
-        init        = true,
+        position    = 7,
+        --init        = true,
         mwfact      = 0.7,
         screen      = 1,
     },
@@ -128,49 +129,55 @@ shifty.config.tags = {
         layout      = awful.layout.suit.floating,
         position    = 2,
         nopopup     = true,
-        leave_kills = true,
+        --leave_kills = true,
         --spawn       = "if [[ $(pidof firefox) -gt 0 ]] ; then firefox & ; fi",
         spawn       = "ps aux | grep [f]irefox ; if [[ $? -eq 0 ]] ; then firefox ; fi",
         screen      = screen.count(),
+        persist     = false,
      },
     ["3:doc"] = {
         layout      = awful.layout.suit.fair,
         position    = 3,
         nopopup     = true,
-        leave_kills = true,
+        --leave_kills = true,
+        persist     = false,
         screen      = screen.count(),
     },
     ["4:code"] = {
         layout      = awful.layout.suit.max.fullscreen,
         position    = 4,
         nopopup     = true,
-        leave_kills = true,
+        --leave_kills = true,
         screen      = screen.count(),
+        persist     = false,
     },
     ["5:media"] = {
         layout      = awful.layout.suit.floating,
         position    = 5,
-        leave_kills = true,
+        --leave_kills = true,
         nopopup     = true,
         spawn       = terminal .. " --working-directory /data/video",
+        persist     = false,
     },
     ["6:d/l"] = {
         layout      = awful.layout.suit.tile.bottom,
         position    = 6,
         nopopup     = true,
-        leave_kills = true,
+        --leave_kills = true,
         screen      = 1,
+        persist     = false,
     },
     ["bar"] = {
         layout      = awful.layout.suit.fair,
-        position    = 7,
-        init        = true,
+        position    = 8,
+        --init        = true,
         screen      = 1,
     },
     ["gimp"] = {
         layout      = awful.layout.suit.floating,
-        leave_kills = true,
+        --leave_kills = true,
         screen = screen.count(),
+        persist     = false,
     },
 }
 shifty.config.apps = {
@@ -230,6 +237,7 @@ shifty.config.apps = {
             class = {
                 "Vlc",
                 "Clementine",
+                "Gsopcast",
             },
         },
         tag = "5:media",
@@ -325,20 +333,6 @@ menubar.utils.terminal = terminal
 
 
 -- {{{ Wibox
--- CPU widget
-cpuwrapper = wibox.widget.background()
-cpuwidget = awful.widget.progressbar()
-cpuicon = wibox.widget.imagebox()
-cpuicon:set_image(beautiful.widget_cpu)
-cpuwidget:set_width(8)
-cpuwidget:set_height(10)
-cpuwidget:set_vertical(true)
-cpuwidget:set_border_color("#111111")
-cpuwidget:set_background_color("#000000")
-cpuwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10, 0 }, stops = { { 0, "#8C8C8C" }, { 0.5, "#9C7676" }, {  1, "#730000" } } })
-vicious.register(cpuwidget, vicious.widgets.cpu, "$1")
-cpuwrapper:set_widget(cpuwidget)
-
 -- Create a volume widget
 volwrapper = wibox.widget.background()
 volwidget = wibox.widget.textbox()
@@ -464,6 +458,72 @@ calendar2.addCalendarToWidget(mytextclock, "<span color='#4d79ff'>%s</span>")
 tclockwrapper = wibox.widget.background()
 tclockwrapper:set_widget(mytextclock)
 
+-- Pacman Update widget
+pacuwrapper = wibox.widget.background()
+pacuwidget = wibox.widget.textbox()
+pacuwrapper:set_widget(pacuwidget)
+pacutimer = timer({ timeout = 60 })
+function update_pacuwidget ()
+        pacutimer.timeout = 1800
+        pacutimer:again()
+        
+        local handle = io.popen("ping -c 1 8.8.8.8 &> /dev/null ; echo $?")
+        local inet = handle:read("*a")
+        handle:close()
+        if inet:sub(1, #inet - 1) ~= "0" then
+            naughty.notify({ text = "Package synchronization aborted: No Internet connection" })
+            return
+        end
+        
+        -- sync pacman
+        os.execute("sudo " .. os.getenv("HOME") .. "/git/linux-scripts/awesome/refresh_database")
+
+        -- get new packages
+        handle = io.popen("yaourt -Qu | wc -l")
+        local count = handle:read("*a")
+        handle:close()
+        local count = count:sub(1, #count - 1)
+
+
+        if tonumber(count) == 0 then
+            pacuwidget:set_text("")
+        else
+            pacuwidget:set_text(count .. " updates ~ ")
+            naughty.notify({ text = "Package database synchronized. New updates available: " .. count })
+        end
+    end
+pacutimer:connect_signal( "timeout", update_pacuwidget)
+pacutimer:start()
+
+local pacu_naughty = nil
+function remove_pacu_naughty()
+    if pacu_naughty ~= nil then
+        naughty.destroy(pacu_naughty)
+        pacu_naughty = nil
+    end
+end
+pacuwrapper:connect_signal("button::press", function() 
+    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Sau") 
+    pacuwidget:set_text("")
+    remove_pacu_naughty()
+end)
+
+pacuwrapper:connect_signal("mouse::enter", function()
+        local handle = io.popen("yaourt -Qu")
+        local packages = handle:read("*a")
+        handle:close()
+        remove_pacu_naughty()
+
+        pacu_naughty = naughty.notify({ text = packages:sub(1, #packages - 1), timeout = 0 })
+    end)
+pacuwrapper:connect_signal("mouse::leave", remove_pacu_naughty)
+--bashets.set_script_path(os.getenv("HOME") .. "/git/linux-scripts/awesome/")
+--bashets.register("org.freedesktop.Hal.Manager", { dbus = true, busname = "system", widget = pacuwidget, format = "$3" })
+--bashets.register("pac_trigger.sh", { callback = update_pacuwidget })
+--bashets.start()
+--]]
+
+
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -550,9 +610,10 @@ for s = 1, screen.count() do
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(arr9)
-    right_layout:add(cpuicon)
-    right_layout:add(cpuwrapper)
-    right_layout:add(arr9)
+    right_layout:add(pacuwrapper)
+    --right_layout:add(cpuicon)
+    --right_layout:add(cpuwrapper)
+    --right_layout:add(arr9)
     right_layout:add(volicon)
     right_layout:add(volwrapper)
     right_layout:add(arr9)
@@ -588,8 +649,8 @@ shifty.init()
 -- {{{ Mouse bindings
 --[[root.buttons(awful.util.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 5, awful.tag.viewnext),
+    awful.button({ }, 4, awful.tag.viewprev)
 ))--]]
 -- }}}
 
@@ -618,7 +679,7 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86Sleep", function ()
         awful.util.spawn("slock") end),
     awful.key({ }, "Print", function ()
-        awful.util.spawn("scrot -e 'mv $f /data/image/Screenshots/ArchLinux'") end),
+        awful.util.spawn("scrot -e 'mv $f /data/image/screenshots/archlinux'") end),
     
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),
@@ -641,6 +702,7 @@ globalkeys = awful.util.table.join(
                     awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>Wiki:</span> " },
                     mypromptbox[mouse.screen].widget,
                     function (word)
+                        word = string.gsub(word, " ", "\\ ")
                         awful.util.spawn("firefox -new-tab http://en.wikipedia.org/wiki/" .. word)
                     end)
                 end),
@@ -650,6 +712,7 @@ globalkeys = awful.util.table.join(
                     awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>ArchWiki:</span> " },
                     mypromptbox[mouse.screen].widget,
                     function (word)
+                        word = string.gsub(word, " ", "\\ ")
                         awful.util.spawn("firefox -new-tab http://wiki.archlinux.org/index.php/" .. word)
                     end)
                 end),
@@ -662,6 +725,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
     awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
+    awful.key({ modkey, "Shift"   }, "u", function () while awful.client.urgent.get() ~= nil do awful.client.urgent.get().urgent = false end end),
     awful.key({ modkey,           }, "Tab",
         function ()
             awful.client.focus.history.previous()
@@ -712,6 +776,7 @@ globalkeys = awful.util.table.join(
  
     -- MISC
     -- show/hide wibox
+    awful.key({ modkey, "Shift"   }, "f",      function () awful.util.spawn_with_shell("notify-send -t 20000 \"$(fortune)\"") end),
     awful.key({ modkey,           }, "b",      function () mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible end),
     awful.key({ modkey,           }, "o",      function () awful.screen.focus(mouse.screen % screen.count() + 1) end),      -- cycles through screens. note: screens are 1-based
     awful.key({ modkey,           }, "d",      function ()
@@ -911,9 +976,13 @@ client.connect_signal("focus",
                         and not (c.class == "Plugin-container")
                         and not (c.class == "supertuxkart")
                         --and not (c.name  == "GNU Image Manipulation Program")
+                        and not (c.name == "SRF Player - Mozilla Firefox")
                         and not (c.name == "Sacred")
+                        and not (c.class == "Ristretto")
                       then
-                        c.opacity = 0.9
+                        c.opacity = 0.91
+                    else
+                        c.opacity = 1
                       end
                     end)
 client.connect_signal("unfocus",
@@ -923,8 +992,15 @@ client.connect_signal("unfocus",
                         and not (c.class == "Mirage")
                         and not (c.class == "Plugin-container")
                         --and not (c.name  == "GNU Image Manipulation Program")
+                        and not (c.name == "SRF Player - Mozilla Firefox")
                         then
                           c.opacity = 0.7
+                      else
+                          c.opacity = 1
                         end
                     end)
 -- }}}
+
+-- Autostart commands
+awful.util.spawn_with_shell("notify-send -t 20000 \"$(fortune)\"")
+
