@@ -660,9 +660,9 @@ shifty.init()
 globalkeys = awful.util.table.join(
     -- MEDIA KEYS
     awful.key({ }, "XF86MonBrightnessUp", function ()
-       awful.util.spawn("xbacklight -inc 10") end),
+       awful.util.spawn("xbacklight -inc 15") end),
     awful.key({ }, "XF86MonBrightnessDown", function ()
-       awful.util.spawn("xbacklight -dec 10") end),
+       awful.util.spawn("xbacklight -dec 15") end),
     awful.key({ }, "XF86ScreenSaver", function ()
        awful.util.spawn("slock")
        awful.util.spawn("xset dpms force off")  end),
@@ -680,6 +680,16 @@ globalkeys = awful.util.table.join(
         awful.util.spawn("slock") end),
     awful.key({ }, "Print", function ()
         awful.util.spawn("scrot -e 'mv $f /data/image/screenshots/archlinux'") end),
+    awful.key({ modkey, }, "F3",     function () 
+        local fh = io.popen("xbacklight -get | cut -d '.' -f 1")
+        local light = fh:read("*l")
+        fh:close()
+        if light == "0" then
+            awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/backlight")
+        else
+            awful.util.spawn("xbacklight -set 0 -time 0")
+        end
+    end),
     
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),

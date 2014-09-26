@@ -3,8 +3,8 @@
 #b=`cat /sys/class/backlight/acpi_video0/brightness`
 on_ac_power
 if [ $? -eq 0 ]; then
-    xbacklight -set 100
+    xbacklight -set 100 -time 0
 else
-    xbacklight -set 30
+    xbacklight -set 30 -time 0
 fi
 
