@@ -82,7 +82,7 @@ if [ "$data" != "" ]; then
     # cover
     if [ "$rp" != "" ] && [ "$radiocover" != "" ]; then
         # use radio cover?
-        echo -n '${image '"$radiocover"' -p 0,556 -s 62x62 -n}'
+        echo -n '${image '"$radiocover"' -p 0,536 -s 62x62 -n}'
     else
         # ensure proper cover is loaded during first 9 seconds of track
         if [ $pos -lt 9000 ]; then

@@ -63,7 +63,7 @@ ${font Open Sans:bold:size=8}RAM:$font${goto 60}${mem}${goto 92}/ ${memmax}${got
 ${font Open Sans:bold:size=8}ROOT:$font ${goto 60}${fs_used /} ${goto 92}/ ${fs_size /}${goto 130}(${fs_used_perc /}%)${goto 162}${fs_bar /}
 ${font Open Sans:bold:size=8}DATA:$font ${goto 60}${fs_used /data} ${goto 92}/ ${fs_size /data}${goto 130}(${fs_used_perc /data}%)${goto 162}${fs_bar /data}
 # WEATHER
-${font Open Sans:Bold:size=10}${color0}WEATHER${font Open Sans:size=6} (Lucerne, ${execi 1800 stat -c %y $HOME/1b2_accuweather_conkyweather_font/curr_cond | cut -d' ' -f2 | cut -d: -f1-2})${hr 2}$font$color
+${font Open Sans:Bold:size=10}${color0}WEATHER${font Open Sans:size=6} (Coventry, ${execi 1800 stat -c %y $HOME/1b2_accuweather_conkyweather_font/curr_cond | cut -d' ' -f2 | cut -d: -f1-2})${hr 2}$font$color
 ${font conkyweather:size=60}${execi 1800  sed -n '27p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}${font} ${voffset -76}
 $alignr${execi 1800 sed -n '28p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}, ${execi 1800 sed -n '29p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}\
 °C (feels like ${execi 1800 sed -n '30p' $HOME/1b2_accuweather_conkyweather_font/curr_cond}°C)
@@ -94,14 +94,16 @@ ${font conkyweather:size=20}${goto 25}${execi 1800 sed -n '6p' $HOME/1b2_accuwea
 ${execi 1800 sed -n '16p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 280}\
 ${execi 1800 sed -n '21p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
 # MUSIC
-${execpi 5 $HOME/git/linux-scripts/conky/clementine-dbus}
+${execpi 5 $HOME/git/linux-scripts/conky/clementine-dbus $HOME/git/linux-scripts/conky/rp.png}
 # APPOINTMENTS
 ${font Open Sans:Bold:size=10}${color0}APPOINTMENTS${hr 2}$font$color
 # this order because Privat and Arbeit set a reasonable range of time, Squash narrows it down further so that HSLU doesnt need to read so many timetable entries
 ${execpi 1800 $HOME/git/linux-scripts/conky/google_calendar.lua Privat Arbeit Squash HSLU Running}
 # TODO
 ${font Open Sans:Bold:size=10}${color0}TODO${hr 2}$font$color
-${execi 600 cat -n $HOME/.todo}
+${execi 600 cat -n /data/Dropbox/misc/misc/todo.txt | sed -n '1,10p'}
+${execi 600 cat -n /data/Dropbox/misc/misc/todo.txt | sed -n '11,20p'}
+${execi 600 cat -n /data/Dropbox/misc/misc/todo.txt | sed -n '21,30p'}
 
 
 

@@ -121,6 +121,10 @@ for k,v in pairs(apps) do
     end
 
     --print(apps[k][1] .. apps[k][2] .. apps[k][3])
+    
+    if #apps[k][2] > 24 then
+        apps[k][2] = apps[k][2]:sub(1, 21) .. "..."
+    end
 
     if (lowest == nil or lowest > k) then
         lowest = k
