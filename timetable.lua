@@ -8,8 +8,6 @@ end
 os.execute("killall wget &> /dev/null")
 os.execute("./timetable_helper.sh")
 
---local handle = io.popen("cat timetable")
---local data = handle:read("*a")
 local skip = true
 
 function string.starts(String,Start)
@@ -30,7 +28,7 @@ local cursor = 0
 local startdate = os.time{ year=arg[1], month=arg[2], day=arg[3], hour=0, minute=0, second=0 }
 local enddate = os.time{ year=arg[4], month=arg[5], day=arg[6], hour=23, minute=59, second=59 }
 
-for line in io.lines("timetable") do
+for line in io.lines("timetable_data") do
     if string.starts(line, "ourEventId:") then
         skip = false
     end
