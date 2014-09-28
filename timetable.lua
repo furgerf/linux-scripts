@@ -1,9 +1,52 @@
 #!/bin/lua
 
-if arg[6] == nil then
+local startdate
+local enddate
+
+if arg[1] == "today" then
+    startdate = os.date("*t")
+    startdate.hour = 0
+    startdate.min = 0
+    startdate.sec = 0
+    startdate = os.time(startdate)
+    enddate = os.date("*t")
+    enddate.hour = 23
+    enddate.min = 59
+    enddate.sec = 59
+    enddate = os.time(enddate)
+elseif arg[1] == "tomorrow" then
+    startdate = os.date("*t")
+    startdate.day = startdate.day + 1
+    startdate.hour = 0
+    startdate.min = 0
+    startdate.sec = 0
+    startdate = os.time(startdate)
+    enddate = os.date("*t")
+    enddate.day = enddate.day + 1
+    enddate.hour = 23
+    enddate.min = 59
+    enddate.sec = 59
+    enddate = os.time(enddate)
+elseif arg[1] == "nextweek" then
+    startdate = os.date("*t")
+    startdate.hour = 0
+    startdate.min = 0
+    startdate.sec = 0
+    startdate = os.time(startdate)
+    enddate = os.date("*t")
+    enddate.day = enddate.day + 7
+    enddate.hour = 23
+    enddate.min = 59
+    enddate.sec = 59
+    enddate = os.time(enddate)
+elseif arg[6] ~= nil then
+    startdate = os.time{ year=arg[1], month=arg[2], day=arg[3], hour=0, minute=0, second=0 }
+    enddate = os.time{ year=arg[4], month=arg[5], day=arg[6], hour=23, minute=59, second=59 }
+else
     print("Usage: ./timetable.lua start:year start:month start:day end:year end:month end:day")
     return
 end
+
 
 os.execute("killall wget &> /dev/null")
 os.execute("./timetable_helper.sh")
@@ -25,8 +68,6 @@ end
 local entries = {}
 local index = 0
 local cursor = 0
-local startdate = os.time{ year=arg[1], month=arg[2], day=arg[3], hour=0, minute=0, second=0 }
-local enddate = os.time{ year=arg[4], month=arg[5], day=arg[6], hour=23, minute=59, second=59 }
 
 for line in io.lines("timetable_data") do
     if string.starts(line, "ourEventId:") then
