@@ -116,6 +116,25 @@ end
 local lowest = nil
 local highest = 0
 for k,v in pairs(apps) do
+    -- correct hour component for UK time zone
+    local split = apps[k][3]:split(":")
+    local hour1 = split[1]:split(" ")[3]
+    local hour2 = split[2]:split(" ")[5]
+   
+    local newhr1 = tonumber(hour1) - 1
+    if newhr1 < 10 then
+        newhr1 = "0" .. newhr1
+    end
+    local newhr2 = tonumber(hour2) - 1
+    if newhr2 < 10 then
+        newhr2 = "0" .. newhr2
+    end
+
+    local joined = split[1]:sub(1, #split[1] - #hour1) .. newhr1 .. ":" .. split[2]:sub(1, #split[2] - #hour2) .. newhr2 .. ":" .. split[3]
+
+    apps[k][3] = joined
+
+
     if (highest < k) then
         highest = k
     end
