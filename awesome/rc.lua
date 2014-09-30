@@ -464,9 +464,6 @@ pacuwidget = wibox.widget.textbox()
 pacuwrapper:set_widget(pacuwidget)
 pacutimer = timer({ timeout = 60 })
 function update_pacuwidget ()
-        pacutimer.timeout = 1800
-        pacutimer:again()
-        
         local handle = io.popen("ping -c 1 8.8.8.8 &> /dev/null ; echo $?")
         local inet = handle:read("*a")
         handle:close()
@@ -474,6 +471,10 @@ function update_pacuwidget ()
             naughty.notify({ text = "Package synchronization aborted: No Internet connection" })
             return
         end
+       
+        -- update can proceed, only update hourly from now on
+        pacutimer.timeout = 1800
+        pacutimer:again()
         
         -- sync pacman
         os.execute("sudo " .. os.getenv("HOME") .. "/git/linux-scripts/awesome/refresh_database")
