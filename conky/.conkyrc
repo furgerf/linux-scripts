@@ -44,10 +44,12 @@ ${alignc 8}${font Open Sans:size=10}${exec whoami}@$nodename
 # SYS
 ${font Open Sans:Bold:size=10}${color0}SYSTEM${hr 2}$color${font}
 $sysname $kernel ($machine) $alignr Running for $alignr$uptime_short
-Temperature / Fan $alignr ${execpi 30 $HOME/git/linux-scripts/conky/conkycolor 0xbebebe 0xff0000 36 103 "sensors | grep 'Physical id 0:' | cut -c18-19"}°$color / ${execi 60 sensors | grep 'fan1:' | cut -c14-18}RPM
+Temperature / Fan $alignr ${execpi 30 $HOME/git/linux-scripts/conky/conkycolor 0xbebebe 0xff0000 36 103 "sensors | grep 'Physical id 0:' | cut -d '+' -f 2 | cut -d '.' -f 1"}°$color / ${execi 60 sensors | grep 'fan1:' | cut -c14-18}RPM
 # CPU
+${execi 300 "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_govenor"}
+
 ${font Open Sans:Bold:size=10}${color0}CPU${hr 2}$color${font}
-Intel i7 3520M${goto 120}${font Open Sans:Bold:size=8}${freq_g cpu0}GHz, ${cpu cpu0}%$font$alignr${execi 300 cpupower frequency-info -g | sed -n '2p' | cut -c12-}
+Intel i7 3520M${goto 120}${font Open Sans:Bold:size=8}${freq_g cpu0}GHz, ${cpu cpu0}%$font$alignr${execi 300 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor}
 #${cpugauge cpu0 20, 40}${goto 64}
 ${cpugraph cpu0 20, 316 000000 ffffff -t}
 # NETWORK
