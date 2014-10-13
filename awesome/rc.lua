@@ -217,7 +217,7 @@ shifty.config.apps = {
     },
     {
         match = {
-            class = { "Eclipse", },
+            class = { "Eclipse", "Brackets" },
         },
         tag = "4:code",
         screen = math.min(screen.count(), 2),
@@ -227,7 +227,6 @@ shifty.config.apps = {
         match = {
             class = {
                 "Corebird",
-                "Chromium",
             }
         },
         tag = "2:web",
@@ -462,18 +461,22 @@ tclockwrapper:set_widget(mytextclock)
 pacuwrapper = wibox.widget.background()
 pacuwidget = wibox.widget.textbox()
 pacuwrapper:set_widget(pacuwidget)
-pacutimer = timer({ timeout = 60 })
+pacutimer = timer({ timeout = 120 })
 function update_pacuwidget ()
         local handle = io.popen("ping -c 1 8.8.8.8 &> /dev/null ; echo $?")
         local inet = handle:read("*a")
         handle:close()
         if inet:sub(1, #inet - 1) ~= "0" then
             naughty.notify({ text = "Package synchronization aborted: No Internet connection" })
+
+            pacutimer.timeout = 1800
+            pacutimer:again()
+            
             return
         end
        
-        -- update can proceed, only update hourly from now on
-        pacutimer.timeout = 1800
+        -- update can proceed, only update bi-hourly from now on
+        pacutimer.timeout = 7200
         pacutimer:again()
         
         -- sync pacman
@@ -489,10 +492,15 @@ function update_pacuwidget ()
         if tonumber(count) == 0 then
             pacuwidget:set_text("")
         else
-            pacuwidget:set_text(count .. " updates ~ ")
-            naughty.notify({ text = "Package database synchronized. New updates available: " .. count })
+            local newText = count .. " updates ~ "
+            if pacuwidgettext ~= newText then
+                pacuwidgettext = newText
+                pacuwidget:set_text(count .. " updates ~ ")
+                naughty.notify({ text = "Package database synchronized. New updates available: " .. count })
+            end
         end
     end
+local pacuwidgettext = ""
 pacutimer:connect_signal( "timeout", update_pacuwidget)
 pacutimer:start()
 
@@ -656,6 +664,16 @@ shifty.init()
 -- }}}
 
 
+local capslock_naughty = nil
+function toggle_capslock ()
+    if capslock_naughty == nil then
+        capslock_naughty = naughty.notify({ text = "Caps Lock", timeout = 0 })
+    else
+        naughty.destroy(capslock_naughty)
+        capslock_naughty = nil
+    end
+end
+        
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
@@ -681,6 +699,10 @@ globalkeys = awful.util.table.join(
         awful.util.spawn("slock") end),
     awful.key({ }, "Print", function ()
         awful.util.spawn("scrot -e 'mv $f /data/image/screenshots/archlinux'") end),
+    awful.key({ }, "Caps_Lock", toggle_capslock),
+    awful.key({"Shift"}, "Caps_Lock", toggle_capslock),
+    awful.key({"Control"}, "Caps_Lock", toggle_capslock),
+    awful.key({modkey}, "Caps_Lock", toggle_capslock),
     awful.key({ modkey, }, "F3",     function () 
         local fh = io.popen("xbacklight -get | cut -d '.' -f 1")
         local light = fh:read("*l")
@@ -1012,6 +1034,15 @@ client.connect_signal("unfocus",
                     end)
 -- }}}
 
--- Autostart commands
-awful.util.spawn_with_shell("notify-send -t 20000 \"$(fortune)\"")
+function init_capslock() 
+    local handle = io.popen("xset q | grep Caps | cut -d ' ' -f 10")
+    local data = handle:read("*l")
+    handle:close()
+    
+    if data == "on" then
+        capslock_naughty = naughty.notify({ text = "Caps Lock", timeout = 0 })
+    end
+end
+
+init_capslock()
 
