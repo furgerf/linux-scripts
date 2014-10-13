@@ -142,7 +142,7 @@ for k,v in pairs(apps) do
     --print(apps[k][1] .. apps[k][2] .. apps[k][3])
     
     if #apps[k][2] > 24 then
-        apps[k][2] = apps[k][2]:sub(1, 21) .. "..."
+        apps[k][2] = apps[k][2]:sub(1, 20) .. "..."
     end
 
     if (lowest == nil or lowest > k) then
