@@ -1,0 +1,32 @@
+#!/bin/bash
+
+i=1
+sep_repo=false
+
+if [ $1 == "-s" ]; then
+    sep_repo=true
+    i=2
+fi
+
+echo "" > multigource_data
+
+while [ $i -le $# ]; do
+    path=`echo $@ | cut -d ' ' -f $i`
+    
+    `gource --output-custom-log multigource_temp_data $path`
+
+    if [ $sep_repo == true ]; then
+        repo=`git rev-parse $path`
+        repo=`basename $repo`
+        sed -i -r "s#(.+)\|#\1|/$repo#" multigource_temp_data
+    fi
+
+    cat multigource_temp_data >> multigource_data
+
+    i=$(($i+1))
+done
+
+cat multigource_data | tail -n +2 | sort -n > multigource_temp_data
+
+gource multigource_temp_data
+
