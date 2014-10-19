@@ -1,0 +1,14 @@
+#!/bin/bash
+
+gov=`cpupower frequency-info | sed -n "9p" | cut -d '"' -f 2`
+
+if [[ $gov == "performance" ]]; then
+    sudo cpupower frequency-set -g "powersave"
+    notify-send "Set CPU govenor to powersave."
+elif [[ $gov == "powersave" ]]; then
+    sudo cpupower frequency-set -g "performance"
+    notify-send "Set CPU govenor to performance."
+else
+    echo "UNKNOWN CPU GOVENOR: "$gov
+fi
+
