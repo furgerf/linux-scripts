@@ -1,0 +1,10 @@
+#!/bin/bash
+
+isset=`sudo tpacpi-bat -g SP 1 | cut -d ' ' -f 1`
+
+if [[ $isset == "0" ]]; then
+    sudo tpacpi-bat -s ST 1 75
+    sudo tpacpi-bat -s SP 1 90
+    notify-send "Set battery thresholds to 75 and 90"
+fi
+
