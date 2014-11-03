@@ -1,2 +1,5 @@
 # data files
 *_data
+
+# files containing private data
+timetable_helper.sh
