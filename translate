@@ -8,7 +8,7 @@ fi
 text="$1"
  
 l_source="auto"
-l_target="de"       #change to your language
+l_target="de"
      
 result=$(curl --connect-timeout 1 -s -i --user-agent "" -d "sl=$l_source" -d "tl=$l_target" --data-urlencode "text=$text" https://translate.google.com)
 encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
