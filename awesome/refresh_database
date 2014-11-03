@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo yaourt -Sy
+pacman -Sy
