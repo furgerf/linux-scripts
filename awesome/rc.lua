@@ -7,6 +7,8 @@ naughty = require("naughty")
 local menubar = require("menubar")
 local shifty = require("shifty")
 --local bashets = require("bashets")
+local alttab = require("alttab")
+
 
 awful.rules = require("awful.rules")
 vicious = require("vicious")
@@ -65,6 +67,68 @@ local layouts =
 -- }}}
 
 
+-- log notification
+local logTimeout = 2
+local logTimer = timer { timeout = logTimeout }
+local lastLogEntry
+local ignore = {    "fabian : TTY=pts/3 ; PWD=",
+                    "fabian : TTY=unknown ; PWD=/home/fabian ; USER=root ; COMMAND=",
+
+                    "sudo:session",
+                    "URL:http://www.accuweather.com"
+               }
+local critical = {
+                    "critical",
+                    "error",
+                 }
+logTimer:connect_signal("timeout", function ()
+    local fh = io.popen("journalctl -p 5 --since \"" .. (logTimeout * 2 + 2) .. " seconds ago\" --no-pager | tail -n +2")
+    local newLastLogEntry
+    for line in fh:lines() do
+        -- initial setup
+        if lastLogEntry == nil then
+            lastLogEntry = line
+        end
+
+        -- if we can start looking at entries, set newlastlogentry
+        if newLastLogEntry == nil and line == lastLogEntry then
+            newLastLogEntry = "not nil!"
+        else
+            -- only print entry if timestamp is newer
+            if line > lastLogEntry then
+                -- check whether it should be ignored
+                local doIgnore = false
+                local isCritical = false
+                for i = 1, #ignore  do
+                    if string.find(line, ignore[i]) ~= nil then
+                        doIgnore = true
+                    end
+                end
+
+                for i = 1, #critical do
+                    if string.find(string.lower(line), string.lower(critical[i])) ~= nil then
+                        isCritical = true
+                    end
+                end
+
+                if doIgnore == false then
+                    if isCritical then
+                        naughty.notify({ text = line, timeout = 15, preset = naughty.config.presets.critical })
+                    else
+                        naughty.notify({ text = line, timeout = 15 })
+                    end
+                end
+                newLastLogEntry = line
+            end
+        end
+    end
+
+    if newLastLogEntry ~= nil and newLastLogEntry ~= "not nil!" then
+        lastLogEntry = newLastLogEntry
+    end
+end)
+--logTimer:start()
+
 
 -- {{{ Random Wallpapers
 -- Apply a random wallpaper if not specified in AWESOME_BG
@@ -118,14 +182,7 @@ shifty.config.tags = {
         init        = true,
         --screen      = 2,
     },
-    ["foo"] = {
-        layout      = awful.layout.suit.tile.bottom,
-        position    = 7,
-        --init        = true,
-        mwfact      = 0.7,
-        screen      = 1,
-    },
-    ["2:web"] = {
+   ["➋ ·web·🌏"] = {
         layout      = awful.layout.suit.floating,
         position    = 2,
         nopopup     = true,
@@ -135,7 +192,7 @@ shifty.config.tags = {
         screen      = screen.count(),
         persist     = false,
      },
-    ["3:doc"] = {
+    ["➌ ·doc·✎"] = {
         layout      = awful.layout.suit.fair,
         position    = 3,
         nopopup     = true,
@@ -143,7 +200,7 @@ shifty.config.tags = {
         persist     = false,
         screen      = screen.count(),
     },
-    ["4:code"] = {
+    ["➍ ·code·💡"] = {
         layout      = awful.layout.suit.max.fullscreen,
         position    = 4,
         nopopup     = true,
@@ -151,7 +208,7 @@ shifty.config.tags = {
         screen      = screen.count(),
         persist     = false,
     },
-    ["5:media"] = {
+    ["➎ ·media·♫"] = {
         layout      = awful.layout.suit.floating,
         position    = 5,
         --leave_kills = true,
@@ -159,7 +216,7 @@ shifty.config.tags = {
         spawn       = terminal .. " --working-directory /data/video",
         persist     = false,
     },
-    ["6:d/l"] = {
+    ["➏ ·d/l·⇅"] = {
         layout      = awful.layout.suit.tile.bottom,
         position    = 6,
         nopopup     = true,
@@ -167,14 +224,22 @@ shifty.config.tags = {
         screen      = 1,
         persist     = false,
     },
-    ["bar"] = {
+    ["➐ ·foo"] = {
+        layout      = awful.layout.suit.tile.bottom,
+        position    = 7,
+        --init        = true,
+        mwfact      = 0.7,
+        screen      = 1,
+    },
+    ["➑ ·bar"] = {
         layout      = awful.layout.suit.fair,
         position    = 8,
         --init        = true,
         screen      = 1,
     },
-    ["gimp"] = {
+    ["➒ ·gimp"] = {
         layout      = awful.layout.suit.floating,
+        position    = 9,
         --leave_kills = true,
         screen = screen.count(),
         persist     = false,
@@ -185,7 +250,7 @@ shifty.config.apps = {
         match = {
             class = { "Firefox" },
         },
-        tag = "2:web",
+        tag = "➋ ·web·🌏",
         --maximize_vertical = true,
         --maximize_horizontal = true,
         screen = math.min(screen.count(), 2),
@@ -193,19 +258,64 @@ shifty.config.apps = {
     },
     {
         match = {
-            class = { "Wine" },
+            class = {
+                "Okular",
+                "libreoffice-writer",
+                "libreoffice.*",
+            },
         },
-        float = true,
+        tag = "➌ ·doc·✎",
+        screen = math.min(screen.count(), 2),
+    },
+    {
+        match = {
+            class = { "Eclipse", "Brackets" },
+        },
+        tag = "➍ ·code·💡",
+        screen = math.min(screen.count(), 2),
+        --run = function () awful.util.spawn("./$HOME/git/linux-scripts/logcat"),
     },
     {
         match = {
             class = {
-                "Okular",
-                "libreoffice-writer",
-                "libreoffice*",
+                "Vlc",
+                "Clementine",
+                "Gsopcast",
+            },
+            name = {
+                "fabian@thinkpad:/data/video.*",
             },
         },
-        tag = "3:doc",
+        tag = "➎ ·media·♫",
+    },
+    {
+        match = {
+            class = {
+                "Qbittorrent",
+                "Vuze",
+            },
+            name = {
+                "JDownloader",
+                ".*DownThemAll!"
+            },
+
+        },
+        tag = "➏ ·d/l·⇅",
+        screen = 1,
+    },
+    {
+        match = {
+            "Gimp",
+        },
+        tag = "➒ ·gimp",
+        screen = math.min(screen.count(), 2),
+        slave = true,
+    },
+    {
+        match = {
+            "gimp%-image%-window",
+        },
+        slave = true,
         screen = math.min(screen.count(), 2),
     },
     {
@@ -217,58 +327,9 @@ shifty.config.apps = {
     },
     {
         match = {
-            class = { "Eclipse", "Brackets" },
+            class = { "Wine" },
         },
-        tag = "4:code",
-        screen = math.min(screen.count(), 2),
-        --run = function () awful.util.spawn("./$HOME/git/linux-scripts/logcat"),
-    },
-    {
-        match = {
-            class = {
-                "Corebird",
-            }
-        },
-        tag = "2:web",
-    },
-    {
-        match = {
-            class = {
-                "Vlc",
-                "Clementine",
-                "Gsopcast",
-            },
-        },
-        tag = "5:media",
-    },
-    {
-        match = {
-            class = {
-                "Qbittorrent",
-                "Vuze",
-            },
-            name = {
-                "JDownloader",
-            },
-
-        },
-        tag = "6:d/l",
-        screen = 1,
-    },
-    {
-        match = {
-            "Gimp",
-        },
-        tag = "gimp",
-        screen = math.min(screen.count(), 2),
-        slave = true,
-    },
-    {
-        match = {
-            "gimp%-image%-window",
-        },
-        slave = true,
-        screen = math.min(screen.count(), 2),
+        float = true,
     },
     {
         match = {
@@ -464,7 +525,15 @@ vicious.register(wifiwidget, vicious.widgets.wifi,
 		elseif signal > 80 and signal <=100 then
 			wifiicon:set_image(beautiful.wifi5)
 		else
-			wifiicon:set_image(beautiful.wifinone)
+            local handle = io.popen("ping -c 1 8.8.8.8 &> /dev/null ; echo $?")
+            local inet = handle:read("*a")
+            handle:close()
+            if inet:sub(1, #inet - 1) == "0" then
+                wifiicon:set_image(beautiful.ethernet)
+                name = "ethernet"
+            else
+			    wifiicon:set_image(beautiful.wifinone)
+            end
 		end
 		wifiicon:set_resize(false)
 		return name
@@ -475,7 +544,7 @@ wifiwrapper:set_widget(wifiwidget)
 
 -- Arrow Icons
 arr9 = wibox.widget.textbox()
-arr9:set_text(" ~ ")
+arr9:set_text(" ⚫ ")
 
 -- Create a textclock widget
 mytextclock = awful.widget.textclock("%A, %B %e, <span color='#4d79ff'>%H:%M</span>", 60)
@@ -506,7 +575,7 @@ function update_pacuwidget ()
         pacutimer:again()
         
         -- sync pacman
-        os.execute("sudo " .. os.getenv("HOME") .. "/git/linux-scripts/awesome/refresh_database")
+        os.execute("sudo " .. os.getenv("HOME") .. "/git/linux-scripts/awesome/refresh_database > /dev/null &")
 
         -- get new packages
         handle = io.popen("yaourt -Qu | wc -l")
@@ -538,7 +607,7 @@ function remove_pacu_naughty()
     end
 end
 pacuwrapper:connect_signal("button::press", function() 
-    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Sau") 
+    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Syau") 
     pacuwidget:set_text("")
     remove_pacu_naughty()
 end)
@@ -699,7 +768,16 @@ function toggle_capslock ()
         capslock_naughty = nil
     end
 end
-        
+       
+
+function clip_translate()
+    local clip = awful.util.pread("xclip -o")
+    if clip then
+        awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/translate \"" .. clip .."\"",false)   --change path to script       
+    end
+end
+
+
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
@@ -739,6 +817,7 @@ globalkeys = awful.util.table.join(
             awful.util.spawn("xbacklight -set 0 -time 0")
         end
     end),
+    awful.key({ modkey, "Control" }, "t", function () clip_translate() end),
     
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),
@@ -792,6 +871,14 @@ globalkeys = awful.util.table.join(
                 client.focus:raise()
             end
         end),
+    awful.key({ "Mod1",           }, "Tab",                                                      
+        function ()
+            alttab.switch(1, "Alt_L", "Tab", "ISO_Left_Tab")                                             
+        end),
+    awful.key({ "Mod1", "Shift"   }, "Tab",                                                      
+        function ()
+            alttab.switch(-1, "Alt_L", "Tab", "ISO_Left_Tab")                                            
+        end),
 
     -- LAYOUT MANIPULATION
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
@@ -805,6 +892,19 @@ globalkeys = awful.util.table.join(
    
     -- PROGRAMS
     awful.key({ modkey }, "Return", function () awful.util.spawn(terminal) end),
+    awful.key({ modkey, "Shift"   }, "Return", function ()
+        --[[awful.util.spawn(terminal)
+       
+        local c1 = awful.client.next(1)
+        local c2 = c1
+
+
+        while awful.client.next(-1, c1) ~= nil and c1 ~= c2 do
+            c1 = awful.client.next(-1, c1)
+        end
+
+        awful.client.swap.byidx(1, c1)--]]
+    end),
     awful.key({ modkey }, "e",      function () awful.util.spawn("thunar -- " .. os.getenv("HOME") .. "/Desktop") end),
     awful.key({ modkey }, "q",      function () menubar.show() end),
     --awful.key({ modkey }, "r",      function () mypromptbox[mouse.screen]:run() end),  
