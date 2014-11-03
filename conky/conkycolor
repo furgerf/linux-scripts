@@ -2,20 +2,10 @@
 
 #params: color1, color2, min, max, value
 
-#color1=0xbebebe
-#color2=0xff0000
 color1=$1
 color2=$2
-#value=`echo $@ | cut -d ' ' -f 5-`
-#value=`$value`
-
-#echo $value
 value=$5
 value=`eval $value`
-
-#echo $value
-#exit 0
-
 part=$((100 * ($value - $3) / ($4 - $3)))
 
 if [[ $part -gt 100 ]]; then
@@ -24,10 +14,6 @@ fi
 if [[ $part -lt 0 ]]; then
     part=0
 fi
-
-
-
-#echo $part
 
 dr=$(((($color2 & 0xff0000) - ($color1 & 0xff0000)) >> 16))
 dg=$(((($color2 & 0x00ff00) - ($color1 & 0x00ff00)) >> 8))
