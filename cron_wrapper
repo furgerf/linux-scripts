@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ -r "$HOME/.dbus/Xdbus" ]; then 
+    . "$HOME/.dbus/Xdbus"
+fi
+
+`$@ 1> /tmp/out 2> /tmp/err`
+
+OUT=`cat /tmp/out`
+ERR=`cat /tmp/err`
+
+echo "$(date "+%A, %B %d, %Y [%T]")$@" >> "$HOME/.cron_history"
+
+if [[ ${#OUT} -gt 0 ]]; then
+    notify-send -u low "$OUT"
+fi
+
+if [[ ${#ERR} -gt 0 ]]; then
+    CMD="Error while running cron task \"$@\":"$'\n'"$ERR"
+    notify-send -u critical "$CMD"
+    echo "$CMD" >> "$HOME/.cron_history"
+fi
+
