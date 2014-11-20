@@ -23,7 +23,7 @@ default_outline_color green
 alignment top_left
 gap_x 1275
 gap_y 21
-text_buffer_size 512
+text_buffer_size 1024
  
 no_buffers yes
 uppercase no
@@ -98,7 +98,7 @@ ${execpi 5 $HOME/git/linux-scripts/conky/clementine-dbus $HOME/git/linux-scripts
 # APPOINTMENTS
 ${font Open Sans:Bold:size=10}${color0}APPOINTMENTS${hr 2}$font$color
 # this order because Privat and Arbeit set a reasonable range of time, Squash narrows it down further so that HSLU doesnt need to read so many timetable entries
-${execpi 1800 $HOME/git/linux-scripts/conky/google_calendar.lua Privat Arbeit Squash HSLU Running}
+${execpi 1800 $HOME/git/linux-scripts/conky/gcalcli.lua}
 # TODO
 ${font Open Sans:Bold:size=10}${color0}TODO${hr 2}$font$color
 ${execi 600 cat -n /data/Dropbox/misc/misc/todo.txt | sed -n '1,10p'}

@@ -58,10 +58,13 @@ for i,v in ipairs(arg) do
         local month,day,hour,minute = line[2]:match(dateformat)
         month = months[month]
         local time = os.time({ year = os.date("%Y"), month = month, day = day, hour = hour, minute = minute })
+        month,day,hour,minute = line[2]:split("-")[2]:match(dateformat)
+        month = months[month]
+        local secondTime = os.time({ year = os.date("%Y"), month = month, day = day, hour = hour, minute = minute })
 
-        -- appointment is only interesting if it's not in the past
-        if (time >= now) then
-            -- if we have less than 3 appointments, add it
+        -- appointment is only interesting if it's not already over
+        if (secondTime >= now) then
+            -- if we have less than 5 appointments, add it
             if (count < 5) then
                 -- if another appointment at the same time exists, increment time by 1
                 local time_present = false
@@ -122,11 +125,11 @@ for k,v in pairs(apps) do
     local hour2 = split[2]:split(" ")[5]
 
     if hour1 ~= "00" and hour2 ~= "00" then
-        local newhr1 = tonumber(hour1) - 1
+        local newhr1 = tonumber(hour1)-- - 1
         if newhr1 < 10 then
             newhr1 = "0" .. newhr1
         end
-        local newhr2 = tonumber(hour2) - 1
+        local newhr2 = tonumber(hour2)-- - 1
         if newhr2 < 10 then
             newhr2 = "0" .. newhr2
         end
