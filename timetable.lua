@@ -68,6 +68,7 @@ end
 local entries = {}
 local index = 0
 local cursor = 0
+local startSeconds = -1
 
 for line in io.lines("timetable_data") do
     if string.starts(line, "ourEventId:") then
@@ -95,8 +96,9 @@ for line in io.lines("timetable_data") do
                     entries[index] = nil
                     cursor = 0
                 else
-                    entries[index][cursor] = os.date("%B %d %Y", datetime)
-                    entries[index][cursor + 1] = os.date("%H%M", datetime)
+                    entries[index][cursor] = os.date("%d/%m/%Y", datetime)
+                    entries[index][cursor + 1] = os.date("%H:%M", datetime)
+                    startSeconds = os.date(datetime)
                     cursor = cursor + 2
                 end
             end
@@ -104,7 +106,7 @@ for line in io.lines("timetable_data") do
             if string.starts(line, "end:") then
                 local date = line:sub(15, #line - 3):split(", ")
                 local datetime = os.time{ year=date[1], month=date[2]+1, day=date[3], hour=date[4], minute=date[5] }
-                entries[index][cursor] = os.date("%H%M", datetime)
+                entries[index][cursor] = (os.date(datetime) - startSeconds) / 60
                 cursor = cursor + 1
             end
         elseif cursor == 5 then
@@ -119,12 +121,15 @@ io.read("*l")
 local count = 0
 for i = 0, index do
     if entries[i] ~= nil then
-        print("google calendar add --cal=HSLU \"" .. entries[i][0] .. " (" .. entries[i][1] .. ") on " .. entries[i][2] .. " from " .. entries[i][3] .. " till " .. entries[i][4] .. "\"")
+        --print("google calendar add --cal=HSLU \"" .. entries[i][0] .. " (" .. entries[i][1] .. ") on " .. entries[i][2] .. " from " .. entries[i][3] .. " till " .. entries[i][4] .. "\"")
+        print("gcalcli --calendar HSLU --title \"" .. entries[i][0] .. "\" --where \"" .. entries[i][1] .. "\" --when \"" .. entries[i][2] .. " " .. entries[i][3] .. "\" --duration \"" .. entries[i][4] .. "\" --noprompt add")
         count = count + 1
     end
 end
 
-print("\nIn order to work with my calendar, I\'ll add one hour to every event. Do you want to add these " .. count .. " entries? (y/n)")
+--print("\nIn order to work with my calendar, I\'ll add one hour to every event. Do you want to add these " .. count .. " entries? (y/n)")
+print("\nDo you want to add these " .. count .. " entries? (y/n)")
+
 repeat
     execute = io.read("*l")
 until execute ~= ""
@@ -133,12 +138,12 @@ print("")
 if execute == "y" or execute == "Y" then
     for i = 0, index do
         if entries[i] ~= nil then
-            os.execute("google calendar add --cal=HSLU \"" .. entries[i][0] .. " (" .. entries[i][1] .. ") on " .. entries[i][2] .. " from " .. entries[i][3]+100 .. " till " .. entries[i][4]+100 .. "\"")
+            --os.execute("google calendar add --cal=HSLU \"" .. entries[i][0] .. " (" .. entries[i][1] .. ") on " .. entries[i][2] .. " from " .. entries[i][3] .. " till " .. entries[i][4] .. "\"")
+            os.execute("gcalcli --calendar HSLU --title \"" .. entries[i][0] .. "\" --where \"" .. entries[i][1] .. "\" --when \"" .. entries[i][2] .. " " .. entries[i][3] .. "\" --duration \"" .. entries[i][4] .. "\" --noprompt add")
         end
     end
-    print("\nDone!")
+    print("Done!")
 else
     print("Aborting...")
 end
-
 
