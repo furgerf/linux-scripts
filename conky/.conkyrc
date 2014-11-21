@@ -50,6 +50,12 @@ ${font Open Sans:Bold:size=10}${color0}CPU${hr 2}$color${font}
 Intel i7 3520M${goto 120}${font Open Sans:Bold:size=8}${freq_g cpu0}GHz, ${cpu cpu0}%$font$alignr${execi 300 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor}
 #${cpugauge cpu0 20, 40}${goto 64}
 ${cpugraph cpu0 20, 316 000000 ffffff -t}
+# PROCESSES
+${font Open Sans:Bold:size=10}${color0}PROCESSES${hr 2}$color$font
+${font Open Sans:Bold:size=8}Process${goto 110}CPU%${goto 170}Process${goto 280}Mem%$font
+${top name 1}${goto 110}${top cpu 1}${goto 170}${top_mem name 1}${goto 280}${top_mem mem 1}
+${top name 2}${goto 110}${top cpu 2}${goto 170}${top_mem name 2}${goto 280}${top_mem mem 2}
+${top name 3}${goto 110}${top cpu 3}${goto 170}${top_mem name 3}${goto 280}${top_mem mem 3}
 # NETWORK
 ${font Open Sans:Bold:size=10}${color0}NETWORK${hr 2}$color$font
 ${font Open Sans:Bold:size=8}WAN$font${goto 80}${execi 3600 $HOME/git/linux-scripts/conky/get_wan}
