@@ -15,7 +15,6 @@ pos=`qdbus org.mpris.clementine /Player org.freedesktop.MediaPlayer.PositionGet`
 
 if [ "$data" != "" ]; then
     # print header
-    echo '${font Open Sans:Bold:size=10}${color0}MUSIC${hr 2}$font$color'
    
     rp=`eval 'echo "$data" | grep "location: " | grep "radioparadise"'`
     location=` eval 'echo "$data" | grep "location: " | cut -b 11-'`
@@ -47,6 +46,10 @@ if [ "$data" != "" ]; then
         end='${font}'
     fi
 
+    # header
+    echo ''
+    echo '${font Open Sans:Bold:size=10}${color0}MUSIC${hr 2}$font$color'
+    
     # artist
     echo -n '${goto 74}Artist:${goto 116}'$begin
     echo -n "$data" | grep 'artist: ' | cut -b 9-

@@ -82,17 +82,17 @@ ${voffset -26} ${goto 50} ${font Open Sans:size=10:Bold}Tonight$font $alignr${ex
 °C (feels like ${execi 1800 sed -n '32p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C), Percip: ${execi 1800 sed -n '33p' $HOME/1b2_accuweather_conkyweather_font/first_days} 
 ${font Open Sans:size=7}$alignr${execi 1800 sed -n '34p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
 ${hr 1}
-${execi 1800 sed -n '5p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
-${execi 1800 sed -n '9p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '8p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
-°C ${goto 90}${execi 1800 sed -n '10p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
-${execi 1800 sed -n '14p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '13p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
-°C${goto 180}${execi 1800 sed -n '15p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
-${execi 1800 sed -n '19p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '18p' $HOME/1b2_accuweather_conkyweather_font/first_days}\
-°C$alignr${execi 1800 sed -n '20p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3} \
-${execi 1800 sed -n '24p' $HOME/1b2_accuweather_conkyweather_font/first_days} - ${execi 1800 sed -n '23p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C
 ${font conkyweather:size=20}${goto 25}${execi 1800 sed -n '6p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 105}${execi 1800 sed -n '11p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 195}\
 ${execi 1800 sed -n '16p' $HOME/1b2_accuweather_conkyweather_font/first_days}${goto 280}\
 ${execi 1800 sed -n '21p' $HOME/1b2_accuweather_conkyweather_font/first_days}${font}
+${font Open Sans:Bold:size=8}${execi 1800 sed -n '5p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3}$font   \
+${execi 1800 sed -n '9p' $HOME/1b2_accuweather_conkyweather_font/first_days}-${execi 1800 sed -n '8p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C \
+${goto 90}${font Open Sans:Bold:size=8}${execi 1800 sed -n '10p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3}$font   \
+${execi 1800 sed -n '14p' $HOME/1b2_accuweather_conkyweather_font/first_days}-${execi 1800 sed -n '13p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C \
+${goto 180}${font Open Sans:Bold:size=8}${execi 1800 sed -n '15p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3}$font   \
+${execi 1800 sed -n '19p' $HOME/1b2_accuweather_conkyweather_font/first_days}-${execi 1800 sed -n '18p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C \
+$alignr${font Open Sans:Bold:size=8}${execi 1800 sed -n '20p' $HOME/1b2_accuweather_conkyweather_font/first_days | cut -c1-3}$font   \
+${execi 1800 sed -n '24p' $HOME/1b2_accuweather_conkyweather_font/first_days}-${execi 1800 sed -n '23p' $HOME/1b2_accuweather_conkyweather_font/first_days}°C \
 # MUSIC
 ${execpi 5 $HOME/git/linux-scripts/conky/clementine-dbus $HOME/git/linux-scripts/conky/rp.png}
 # APPOINTMENTS
