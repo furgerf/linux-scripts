@@ -30,4 +30,6 @@ done
 # combine/sort results and feed to gource
 cat multigource_data | tail -n +2 | sort -n > multigource_temp_data
 gource multigource_temp_data
+rm multigource_data
+rm multigource_temp_data
 
