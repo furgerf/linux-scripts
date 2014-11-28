@@ -96,7 +96,7 @@ for line in io.lines("timetable_data") do
                     entries[index] = nil
                     cursor = 0
                 else
-                    entries[index][cursor] = os.date("%d/%m/%Y", datetime)
+                    entries[index][cursor] = os.date("%m/%d/%Y", datetime)
                     entries[index][cursor + 1] = os.date("%H:%M", datetime)
                     startSeconds = os.date(datetime)
                     cursor = cursor + 2
@@ -136,6 +136,7 @@ until execute ~= ""
 print("")
 
 if execute == "y" or execute == "Y" then
+    print("Working...")
     for i = 0, index do
         if entries[i] ~= nil then
             --os.execute("google calendar add --cal=HSLU \"" .. entries[i][0] .. " (" .. entries[i][1] .. ") on " .. entries[i][2] .. " from " .. entries[i][3] .. " till " .. entries[i][4] .. "\"")
