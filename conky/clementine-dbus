@@ -2,6 +2,8 @@
 
 radiocover=$1
 
+coverXoffset=600
+
 # find out whether clementine is running
 running=`dbus-send --session --dest=org.freedesktop.DBus --type=method_call --print-reply /org/freedesktop/DBus org.freedesktop.DBus.ListNames | grep clementine`
 if [ "$running" == "" ]; then    
@@ -85,14 +87,14 @@ if [ "$data" != "" ]; then
     # cover
     if [ "$rp" != "" ] && [ "$radiocover" != "" ]; then
         # use radio cover?
-        echo -n '${image '"$radiocover"' -p 0,536 -s 62x62 -n}'
+        echo -n '${image '"$radiocover"' -p 0,'"$coverXoffset"' -s 62x62 -n}'
     else
         # ensure proper cover is loaded during first 9 seconds of track
         if [ $pos -lt 9000 ]; then
             pic=`eval 'echo "$data" | grep "arturl: " | cut -b 16-'`
             `cp $pic '/tmp/cover.jpg'`
         fi
-        echo -n '${image /tmp/cover.jpg -p 0,536 -s 62x62 -n}'
+        echo -n '${image /tmp/cover.jpg -p 0,'"$coverXoffset"' -s 62x62 -n}'
     fi
 fi
 
