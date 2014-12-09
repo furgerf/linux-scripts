@@ -28,10 +28,19 @@ while data ~= nil do
     local colorend = data:find("}", colorstart)
     local color = data:sub(colorstart, colorend)
     
-    local timestart = data:find(":") - 2
-    local time = data:sub(timestart, timestart + 5)
+    local time
+    local title
+    if data:find(":") ~= nil then
+        local timestart = data:find(":") - 2
+        time = data:sub(timestart, timestart + 5)
+        title = data:sub(timestart + 7)
+    else
+        --print(data)
+        time = "allday"
+        title = data:sub(colorend + 10)
+        --print(title)
+    end
 
-    local title = data:sub(timestart + 7)
     
     result = result .. "\n" .. date .. "${goto 68}" .. color .. time .. "${goto 100}" .. title
 
