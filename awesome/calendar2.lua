@@ -151,6 +151,7 @@ function addCalendarToWidget(mywidget, custom_current_day_format)
   widgetid = calendar[3].id
   end)
 
+--[[
   mywidget:connect_signal('mouse::enter', function ()
         local fh = io.popen("google calendar today --cal=Privat | sed -n '3,20p'")
         local todayData = ""
@@ -191,6 +192,7 @@ function addCalendarToWidget(mywidget, custom_current_day_format)
         screen = capi.mouse.screen
     })
 end)
+    --]]
 
   mywidget:connect_signal('mouse::leave', function () naughty.destroy(calendar[3]) naughty.destroy(todayNaughty) end)
 

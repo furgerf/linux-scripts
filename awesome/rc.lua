@@ -7,7 +7,9 @@ naughty = require("naughty")
 local menubar = require("menubar")
 local shifty = require("shifty")
 --local bashets = require("bashets")
-local alttab = require("alttab")
+--local alttab = require("alttab")
+--local revelation = require("revelation")
+local hints = require("hints")
 
 
 awful.rules = require("awful.rules")
@@ -41,6 +43,8 @@ end
 
 -- {{{ Variables
 beautiful.init("/usr/share/awesome/themes/archdove/theme.lua")
+--revelation.init()
+--hints.init()
 
 terminal = "xfce4-terminal"
 editor = os.getenv("EDITOR") or "vim"
@@ -254,7 +258,7 @@ shifty.config.apps = {
         --maximize_vertical = true,
         --maximize_horizontal = true,
         screen = math.min(screen.count(), 2),
-        dockable = true,
+        --dockable = true,
     },
     {
         match = {
@@ -262,6 +266,9 @@ shifty.config.apps = {
                 "Okular",
                 "libreoffice-writer",
                 "libreoffice.*",
+            },
+            name = {
+                ".*LibreOffice.*"
             },
         },
         tag = "➌ ·doc·✎",
@@ -351,6 +358,7 @@ shifty.config.apps = {
 
 
 -- {{{ Menu
+--[[
 myconfigmenu = {
     { "xinit", editor_cmd .. " " .. os.getenv("HOME") .. "/.xinitrc" },
     { "bash", editor_cmd .. " " .. os.getenv("HOME") .. "/.bashrc" },
@@ -377,12 +385,20 @@ myawesomemenu = {
     { "restart", awesome.restart },
     { "quit", awesome.quit }
 }
+--]]
 mymainmenu = awful.menu({
   items = {
+    --[[
     { "places terminal", myplacestermmenu, beautiful.terminal_icon },
     { "places explorer", myplacemenu, beautiful.explorer_icon },
     { "config", myconfigmenu, beautiful.config_icon },
     { "awesome", myawesomemenu, beautiful.awesome_icon },
+    --]]
+    { "xinit", editor_cmd .. " " .. os.getenv("HOME") .. "/.xinitrc" },
+    { "bash", editor_cmd .. " " .. os.getenv("HOME") .. "/.bashrc" },
+    { "awesome", editor_cmd .. " " .. awesome.conffile },
+    { "conky", editor_cmd .. " " .. os.getenv("HOME") .. "/git/linux-scripts/conky/.conkyrc" },
+    { "vim", editor_cmd .. " " .. os.getenv("HOME") .. "/.vimrc" },
   }
 })
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
@@ -447,6 +463,25 @@ end)
 cpuicon:connect_signal("button::press", function()
     awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/cpu_toggle_govenor")
 end)
+cpunaughty = nil
+cpuwrapper:connect_signal("mouse::enter", function ()
+    cpunaughty = naughty.notify({ text = "CPU govenor: " .. getCpuNaughtyText() })
+end)
+cpuwrapper:connect_signal("mouse::leave", function ()
+    naughty.destroy(cpunaughty)
+end)
+cpuicon:connect_signal("mouse::enter", function ()
+    cpunaughty = naughty.notify({ text = "CPU govenor: " .. getCpuNaughtyText() })
+end)
+cpuicon:connect_signal("mouse::leave", function ()
+    naughty.destroy(cpunaughty)
+end)
+function getCpuNaughtyText()
+    local fh = io.popen("cpupower frequency-info | sed -n \"9p\" | cut -d \'\"\' -f 2")
+    local data = fh:read("*l")
+    fh:close()
+    return data
+end
 
 
 -- Create a battery widget
@@ -827,6 +862,7 @@ globalkeys = awful.util.table.join(
     -- CLIENT NAVIGATION
     awful.key({ modkey, }, "j",
         function ()
+            --hints.focus()
             awful.client.focus.byidx( 1)
             if client.focus then client.focus:raise() end
         end),
@@ -871,14 +907,14 @@ globalkeys = awful.util.table.join(
                 client.focus:raise()
             end
         end),
-    awful.key({ "Mod1",           }, "Tab",                                                      
-        function ()
-            alttab.switch(1, "Alt_L", "Tab", "ISO_Left_Tab")                                             
-        end),
-    awful.key({ "Mod1", "Shift"   }, "Tab",                                                      
-        function ()
-            alttab.switch(-1, "Alt_L", "Tab", "ISO_Left_Tab")                                            
-        end),
+--    awful.key({ "Mod1",           }, "Tab",                                                      
+--        function ()
+--            alttab.switch(1, "Alt_L", "Tab", "ISO_Left_Tab")                                             
+--        end),
+--    awful.key({ "Mod1", "Shift"   }, "Tab",                                                      
+--        function ()
+--            alttab.switch(-1, "Alt_L", "Tab", "ISO_Left_Tab")                                            
+--        end),
 
     -- LAYOUT MANIPULATION
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
@@ -952,6 +988,17 @@ globalkeys = awful.util.table.join(
                         naughty.notify({ text = fr, timeout = 90, width = 400 })
                     end, nil, awful.util.getdir("cache") .. "/dict")
                 end),
+
+    awful.key({ modkey,           }, "t",      function ()
+                    info = true
+                    awful.prompt.run({ fg_cursor = "black", bg_cursor="gray", prompt = "<span color='#008DFA'>Torrent:</span> " },
+                    mypromptbox[mouse.screen].widget,
+                    function (word)
+                        word = string.gsub(word, " ", "%%20")
+                        awful.util.spawn("firefox -new-tab http://argentinabay.info/search/" .. word .. "/0/7/0")
+                    end, nil, nil)
+                end),
+
 
    awful.key({ modkey,           }, "c",      function ()
                     info = true
