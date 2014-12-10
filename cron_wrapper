@@ -11,11 +11,11 @@ ERR=`cat /tmp/err`
 
 echo "$(date "+%A, %B %d, %Y [%T]")$@" >> "$HOME/.cron_history"
 
-if [[ ${#OUT} -gt 0 ]]; then
+if [ "$OUT" ]; then
     notify-send -u low "$OUT"
 fi
 
-if [[ ${#ERR} -gt 0 ]]; then
+if [ "$ERR" ]; then
     CMD="Error while running cron task \"$@\":"$'\n'"$ERR"
     notify-send -u critical "$CMD"
     echo "$CMD" >> "$HOME/.cron_history"

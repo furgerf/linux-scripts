@@ -7,7 +7,7 @@ my_ls() {
     pushd "$1" >/dev/null
 
     if [ `find . -maxdepth 1 | grep "^./.git$"` ]; then
-        CNT=`git shortlog origin/master..HEAD -s | sed -e "s/\s[a-zA-Z]*//g"`
+        CNT=`git shortlog origin/master..HEAD -s | sed -e "s/\s*[a-zA-Z]*//g"`
         if [ $CNT ]; then
             RES="$RES"$'\n'`basename $PWD`": $CNT commits"
         fi
@@ -17,7 +17,6 @@ my_ls() {
     else
         for file in * ; do
             #test -d "$file" && echo "$file"
-            
             if [[ -d "$file" ]]; then
                 my_ls "$file"
             fi
@@ -31,6 +30,6 @@ my_ls() {
 my_ls "$1"
 
 if [ "$RES" ]; then
-    notify-send "${RES:1}"
+    echo "${RES:1}"
 fi
 
