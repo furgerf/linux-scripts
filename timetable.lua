@@ -148,3 +148,5 @@ else
     print("Aborting...")
 end
 
+os.execute("rm timetable_data")
+
