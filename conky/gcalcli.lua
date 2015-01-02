@@ -3,7 +3,7 @@
 local format = "%Y-%m-%dT%H:%M"
 local fh = io.popen("gcalcli --cal Privat#red --cal Arbeit#magenta --cal HSLU#yellow --cal Running#cyan --cal Squash#green --military --conky --color_date white agenda " .. os.date(format, os.time()) .. " " .. os.date(format, os.time() + 7 * 86400))
 
-local datapath = "gcalcli_data"
+local datapath = arg[0]:sub(0, #arg[0] - 4) .. "_data"
 
 local data = fh:read("*l")
 while data ~= nil and data:len() < 20 do
