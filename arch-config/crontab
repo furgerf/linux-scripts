@@ -1,0 +1,5 @@
+# min hour day month dayOfWeek cmd
+# dayOfWeek: sunday = 0
+0 13 * * * ~/git/linux-scripts/cron_wrapper sudo updatedb
+0 14 * * 0 ~/git/linux-scripts/cron_wrapper sudo paccache -r -k 2
+0 00,04,08,12,16,20 * * * ~/git/linux-scripts/cron_wrapper /home/fabian/git/linux-scripts/git-status /home/fabian/git

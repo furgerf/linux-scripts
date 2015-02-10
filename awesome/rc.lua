@@ -644,7 +644,7 @@ function remove_pacu_naughty()
     end
 end
 pacuwrapper:connect_signal("button::press", function() 
-    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Syau && sleep 30")
+    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Syau")
     pacuwidget:set_text("")
     remove_pacu_naughty()
 end)
