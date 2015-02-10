@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local format = "%Y-%m-%dT%H:%M"
-local fh = io.popen("gcalcli --cal Privat#red --cal Arbeit#magenta --cal HSLU#yellow --cal Running#cyan --cal Squash#green --military --conky --color_date white agenda " .. os.date(format, os.time()) .. " " .. os.date(format, os.time() + 7 * 86400))
+local fh = io.popen("python2 gcalcli --cal Privat#red --cal Arbeit#magenta --cal HSLU#yellow --cal Running#cyan --cal Squash#green --military --conky --color_date white agenda " .. os.date(format, os.time()) .. " " .. os.date(format, os.time() + 7 * 86400))
 
 local datapath = arg[0]:sub(0, #arg[0] - 4) .. "_data"
 

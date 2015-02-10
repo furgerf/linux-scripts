@@ -1,0 +1,45 @@
+# single-tab completion
+set show-all-if-ambiguous on
+# alt+h for man entry of command
+"\eh": "\C-a\eb\ed\C-y\e#man \C-y\C-m\C-p\C-p\C-a\C-d\C-e"
+# ?
+set input-meta on
+# ?
+set output-meta on
+# ?
+set convert-meta off
+# ignore case on completion
+set completion-ignore-case on
+# only complete after second tab
+set menu-complete-display-prefix on
+# colored menu completion
+set colored-stats on
+# VI-mode
+set editing-mode vi
+# VI command
+set keymap vi-command
+# insert previous cmd
+"p": "i !!\r"
+# VI insert
+set keymap vi-insert
+# tab opens completion menu
+TAB: menu-complete
+# shift-tab moves backwards in menu
+"\e[Z": menu-complete-backward
+# executes last command again (in vi-command mode)
+"p": self-insert
+
+# history completion
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# ctrl-arrow navigation
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+
+
+

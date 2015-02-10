@@ -103,8 +103,7 @@ ${execi 1800 sed -n '24p' $HOME/1b2_accuweather_conkyweather_font/first_days}-${
 ${execpi 5 $HOME/git/linux-scripts/conky/clementine-dbus $HOME/git/linux-scripts/conky/rp.png}
 # APPOINTMENTS
 ${font Open Sans:Bold:size=10}${color0}APPOINTMENTS${hr 2}$font$color
-# this order because Privat and Arbeit set a reasonable range of time, Squash narrows it down further so that HSLU doesnt need to read so many timetable entries
-${execpi 1800 $HOME/git/linux-scripts/conky/gcalcli.lua}
+${execpi 3600 $HOME/git/linux-scripts/conky/gcalcli.lua}
 # TODO
 ${font Open Sans:Bold:size=10}${color0}TODO${hr 2}$font$color
 ${execi 600 cat -n /data/Dropbox/misc/misc/todo.txt | sed -n '1,10p'}

@@ -136,6 +136,7 @@ end)
 
 -- {{{ Random Wallpapers
 -- Apply a random wallpaper if not specified in AWESOME_BG
+local wallpaperTimer
 if os.getenv("AWESOME_BG") then
   gears.wallpaper.maximized(os.getenv("AWESOME_BG"))
 else
@@ -164,11 +165,11 @@ else
     end
 
     -- stop the timer (we don't need multiple instances running at the same time)
-    wallpaperTimer:stop()
+    --wallpaperTimer:stop()
 
     --restart the timer
-    wallpaperTimer.timeout = changeTime
-    wallpaperTimer:start()
+    --wallpaperTimer.timeout = changeTime
+    --wallpaperTimer:start()
   end)
 
   -- initial start when rc.lua is first run
@@ -193,7 +194,7 @@ shifty.config.tags = {
         --leave_kills = true,
         --spawn       = "if [[ $(pidof firefox) -gt 0 ]] ; then firefox & ; fi",
         spawn       = "ps aux | grep [f]irefox ; if [[ $? -eq 0 ]] ; then firefox ; fi",
-        screen      = screen.count(),
+        --screen      = screen.count(),
         persist     = false,
      },
     ["➌ ·doc·✎"] = {
@@ -202,14 +203,14 @@ shifty.config.tags = {
         nopopup     = true,
         --leave_kills = true,
         persist     = false,
-        screen      = screen.count(),
+        --screen      = screen.count(),
     },
     ["➍ ·code·💡"] = {
         layout      = awful.layout.suit.max.fullscreen,
         position    = 4,
         nopopup     = true,
         --leave_kills = true,
-        screen      = screen.count(),
+        --screen      = screen.count(),
         persist     = false,
     },
     ["➎ ·media·♫"] = {
@@ -225,7 +226,7 @@ shifty.config.tags = {
         position    = 6,
         nopopup     = true,
         --leave_kills = true,
-        screen      = 1,
+        --screen      = 1,
         persist     = false,
     },
     ["➐ ·foo"] = {
@@ -233,19 +234,19 @@ shifty.config.tags = {
         position    = 7,
         --init        = true,
         mwfact      = 0.7,
-        screen      = 1,
+        --screen      = 1,
     },
     ["➑ ·bar"] = {
         layout      = awful.layout.suit.fair,
         position    = 8,
         --init        = true,
-        screen      = 1,
+        --screen      = 1,
     },
     ["➒ ·gimp"] = {
         layout      = awful.layout.suit.floating,
         position    = 9,
         --leave_kills = true,
-        screen = screen.count(),
+        --screen = screen.count(),
         persist     = false,
     },
 }
@@ -560,7 +561,7 @@ vicious.register(wifiwidget, vicious.widgets.wifi,
 		elseif signal > 80 and signal <=100 then
 			wifiicon:set_image(beautiful.wifi5)
 		else
-            local handle = io.popen("ping -c 1 8.8.8.8 &> /dev/null ; echo $?")
+            local handle = io.popen("wget -q --tries=1 --timeout=1 --spider http://google.com &> /dev/null ; echo $?")
             local inet = handle:read("*a")
             handle:close()
             if inet:sub(1, #inet - 1) == "0" then
@@ -569,6 +570,7 @@ vicious.register(wifiwidget, vicious.widgets.wifi,
             else
 			    wifiicon:set_image(beautiful.wifinone)
             end
+            --wifiicon:set_image(beautiful.wifinone)
 		end
 		wifiicon:set_resize(false)
 		return name
@@ -591,7 +593,7 @@ tclockwrapper:set_widget(mytextclock)
 pacuwrapper = wibox.widget.background()
 pacuwidget = wibox.widget.textbox()
 pacuwrapper:set_widget(pacuwidget)
-pacutimer = timer({ timeout = 120 })
+pacutimer = timer({ timeout = 900 })
 function update_pacuwidget ()
         local handle = io.popen("ping -c 1 8.8.8.8 &> /dev/null ; echo $?")
         local inet = handle:read("*a")
@@ -642,7 +644,7 @@ function remove_pacu_naughty()
     end
 end
 pacuwrapper:connect_signal("button::press", function() 
-    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Syau") 
+    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Syau && sleep 30")
     pacuwidget:set_text("")
     remove_pacu_naughty()
 end)
@@ -842,6 +844,7 @@ globalkeys = awful.util.table.join(
     awful.key({"Shift"}, "Caps_Lock", toggle_capslock),
     awful.key({"Control"}, "Caps_Lock", toggle_capslock),
     awful.key({modkey}, "Caps_Lock", toggle_capslock),
+    awful.key({altkey}, "Caps_Lock", toggle_capslock),
     awful.key({ modkey, }, "F3",     function () 
         local fh = io.popen("xbacklight -get | cut -d '.' -f 1")
         local light = fh:read("*l")
@@ -853,6 +856,15 @@ globalkeys = awful.util.table.join(
         end
     end),
     awful.key({ modkey, "Control" }, "t", function () clip_translate() end),
+    awful.key({ modkey, "Control" }, "w", function () 
+        if (wallpaperTimer ~= nil) then
+            local wp = wallpaperList[math.random(1, #wallpaperList)]
+            for s = 1, screen.count() do
+                gears.wallpaper.maximized(wp, s, true)
+            end
+            wallpaperTimer:again()
+            end
+        end),
     
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),
@@ -1184,7 +1196,9 @@ client.connect_signal("focus",
                         --and not (c.name  == "GNU Image Manipulation Program")
                         and not (c.name == "SRF Player - Mozilla Firefox")
                         and not (c.name == "Sacred")
+                        and not (c.class == "Geeqie")
                         and not (c.class == "Ristretto")
+                        and not (c.class == "MPlayer")
                       then
                         c.opacity = 0.91
                     else

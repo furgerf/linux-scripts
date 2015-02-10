@@ -2,5 +2,5 @@
 
 adb="/opt/android-sdk/platform-tools/"
 
-"$adb"adb logcat -v time | ${BASH_SOURCE[0]}-colorize
+"$adb"adb logcat -v time | logcat-color
 
