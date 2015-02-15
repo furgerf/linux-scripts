@@ -117,6 +117,7 @@ alias :Q='exit'
 alias covremote='rdesktop -u furgerf@coventry.ac.uk -g 1024x650 -k de-ch cu2study.coventry.ac.uk -p 1Tennarvet.'
 
 alias multigource='~/git/linux-scripts/multigource'
+alias git-pull='~/git/linux-scripts/git-pull ~/git'
 
 alias image='geeqie'
 alias imagefind='find . -name "*" -exec file {} \; | /usr/bin/grep -o -P "^.+: \w+ image"'
