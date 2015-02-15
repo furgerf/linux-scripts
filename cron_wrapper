@@ -13,7 +13,7 @@ echo "*** $(date "+%A, %B %d, %Y [%T]")$@" >> "$HOME/.cron_history"
 
 if [ "$OUT" ]; then
     notify-send -u low "$OUT"
-    echo "OUT: $OUT" >> "$HOME/.cron_history"
+    echo $OUT" >> "$HOME/.cron_history"
 fi
 
 if [ "$ERR" ]; then

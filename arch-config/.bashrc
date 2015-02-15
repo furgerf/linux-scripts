@@ -15,16 +15,15 @@ PS1="\[\033[1;30m\][\[\033[01;37m\]\$?\$(if [[ \$? == 0 ]]; then echo \"  \[\033
 # vanilla
 #PS1='[\u@\h \W]\$ '
 # exports
-export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:/home/fabian/perl5";
-export PERL_MB_OPT="--install_base /home/fabian/perl5";
-export PERL_MM_OPT="INSTALL_BASE=/home/fabian/perl5";
-export PERL5LIB="/home/fabian/perl5/lib/perl5:$PERL5LIB";
-export PATH="/home/fabian/perl5/bin:$PATH";
+export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:/home/fabian/perl5"
+export PERL_MB_OPT="--install_base /home/fabian/perl5"
+export PERL_MM_OPT="INSTALL_BASE=/home/fabian/perl5"
+export PERL5LIB="/home/fabian/perl5/lib/perl5:$PERL5LIB"
 export EDITOR="vim"
 #export TERM="xfce4-terminal"
 #export TERM="xterm"
 export PATH="$PATH:/opt/android-sdk/tools:/opt/android-sdk/build-tools:/opt/android-sdk/platform-tools"
-export HISTSIZE=1000
+export HISTSIZE=5000
 export HISTCONTROL=ignoredups
 
 # highlight broken symlinks     
@@ -283,4 +282,9 @@ x(){
     else
             echo "'$1' is not a valid file"
     fi
+}
+
+
+sus(){ 
+  sort | uniq -c | sort $@;
 }

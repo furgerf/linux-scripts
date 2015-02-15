@@ -39,7 +39,7 @@ nm-applet &
 $HOME/git/linux-scripts/set_tpacpi
 
 # dropbox
-dropboxd &
+dropbox &
 
 # set dbus address for cron stuff
 $HOME/git/linux-scripts/set_dbus_address
