@@ -810,7 +810,7 @@ end
 function clip_translate()
     local clip = awful.util.pread("xclip -o")
     if clip then
-        awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/translate \"" .. clip .."\"",false)   --change path to script       
+        awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/translate \'" .. clip .."\'", false)   --change path to script       
     end
 end
 

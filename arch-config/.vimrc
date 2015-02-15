@@ -112,3 +112,10 @@ cmap sudow w !sudo tee > /dev/null %
 
 set pastetoggle=<F4>
 
+" make j/k move down/up one ROW rather than one LINE
+:nmap j gj
+:nmap k gk
+
+" unhighlight search results
+:nmap \q :nohlsearch<CR>
+

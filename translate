@@ -12,10 +12,10 @@ l_target="de"
      
 result=$(curl --connect-timeout 1 -s -i --user-agent "" -d "sl=$l_source" -d "tl=$l_target" --data-urlencode "text=$text" https://translate.google.com)
 encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-result=$(iconv -f $encoding <<<"$result" |  awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text | sed 's/<[^>]*>//g')
+result=$(iconv -f "$encoding" <<<"$result" |  awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text | sed 's/<[^>]*>//g')
 #copy translated text to clipboard
-echo $result | xclip -in -sel clip
-result=`echo "naughty.notify({title=\"Übersetzung:\", text=\"$result\", timeout = 20})"`
-echo $result | awesome-client -
+echo "$result" | xclip -in -sel clip
+result="naughty.notify({title=\"Übersetzung:\", text=\"$result\", timeout = 20})"
+echo "$result" | awesome-client -
      
 exit

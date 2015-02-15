@@ -6,12 +6,13 @@ my_ls() {
     # save current directory then cd to "$1"
     pushd "$1" >/dev/null
 
-    if [ `find . -maxdepth 1 | grep "^./.git$"` ]; then
-        CNT=`git shortlog origin/master..HEAD -s | sed -e "s/\s*[a-zA-Z]*//g"`
-        if [ $CNT ]; then
-            RES="$RES"$'\n'`basename $PWD`": $CNT commits"
+    if find . -maxdepth 1 | grep -q "^./.git$" ; then
+        CNT=$(git shortlog origin/master..HEAD -s | sed -e "s/\s*[a-zA-Z]*//g")
+        if [ "$CNT"  ]; then
+            REPO=$(basename "$PWD")
+            RES="$RES"$'\n'$REPO": $CNT commits"
         fi
-    elif [ `find . -maxdepth 1 | grep "^./.hg$"` ]; then
+    elif find . -maxdepth 1 | grep -q "^./.hg$" ; then
         echo "ignoring mercurial repos" > /dev/null
 
     else

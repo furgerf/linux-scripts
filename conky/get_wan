@@ -2,9 +2,9 @@
 
 a=$(wget -nv -O - http://ip.tupeux.com | tail)
 
-if [[ $a == "" ]]; then
+if [[ "$a" == "" ]]; then
     echo No Address
 else
-    echo $a
+    echo "$a"
 fi
 

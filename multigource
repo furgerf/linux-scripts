@@ -2,33 +2,32 @@
 
 # prepare
 i=1
-sep_repo=false
 echo "" > multigource_data
 
 # loop over directories (assuming they're git repos...)
 while [ $i -le $# ]; do
     # extract path from arguments
-    path=`echo $@ | cut -d ' ' -f $i`
+    path=$(echo "$@" | cut -d ' ' -f $i)
     # create log
-    `gource --output-custom-log multigource_temp_data $path`
+    gource --output-custom-log multigource_temp_data "$path"
     # get repo name
-    while [ "`echo $path | cut -s -d '/' -f 2-`" != "" ]; do
-        path=`echo $path | cut -s -d '/' -f 2-`
+    while [ "$(echo "$path" | cut -s -d '/' -f 2-)" != "" ]; do
+        path=$(echo "$path" | cut -s -d '/' -f 2-)
     done
-    if [ "`echo $path | tail -c 2`" == "/" ]; then
-        path=`echo $path | head -c -2`
+    if [ "$(echo "$path" | tail -c 2)" == "/" ]; then
+        path=$(echo "$path" | head -c -2)
     fi
-    echo $path
+    echo "$path"
     # set repo name
-    re="s#(.+)\|#\1|/"$path"#"
-    sed -i -r $re multigource_temp_data
+    re="s#(.+)\|#\1|/$path#"
+    sed -i -r "$re" multigource_temp_data
     # add to data
     cat multigource_temp_data >> multigource_data
-    i=$(($i+1))
+    i=$((i+1))
 done
 
 # combine/sort results and feed to gource
-cat multigource_data | tail -n +2 | sort -n > multigource_temp_data
+tail -n +2 < multigource_data | sort -n > multigource_temp_data
 gource multigource_temp_data
 rm multigource_data
 rm multigource_temp_data
