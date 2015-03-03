@@ -10,7 +10,7 @@ OUT=$(cat /tmp/out)
 ERR=$(cat /tmp/err)
 DATE=$(date "+%A, %B %d, %Y [%T]")
 
-echo "*** $DATE $*: " >> "$HOME/.cron_history"
+echo "*** $DATE $*" >> "$HOME/.cron_history"
 
 if [ "$OUT" ]; then
     notify-send -u low "$OUT"

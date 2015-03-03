@@ -44,7 +44,6 @@ alias grep='grep --color=auto'
 alias df='df -h'
 alias du='du -c -h'
 alias mkdir='mkdir -p -v'
-#alias p4='ping 4.2.2.2'
 alias cd..='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -141,6 +140,10 @@ alias sacred="xfce4-terminal --working-directory $HOME/.wine/drive_c/Program\ Fi
 
 alias winmount="mount /dev/sdb1 /win"
 alias term='xfce4-terminal'
+execterm () {
+    #xfce4-terminal -e "env PROMPT_COMMAND; $@ bash"
+    xfce4-terminal -e "bash -c '$@; exec bash'"
+}
 
 alias cp='acp -agi'
 alias mv='amv -gi'
@@ -263,6 +266,8 @@ pjson() {
 
 alias labyrinth='while ( true ) ; do if [ $( expr $RANDOM % 2 ) -eq 0 ] ; then echo -ne "\xE2\x95\xB1" ; else echo -ne "\xE2\x95\xB2" ; fi ; done'
 
+alias agora='cd /home/fabian/git/cu/305cde/Agora && execterm "npm start" && execterm vim && git remote update && git status'
+alias dissertation='cd $HOME/git/cu/300com/300com-final-project/dissertation && vim main.tex'
 
 x(){
     if [ -f $1 ] ; then
@@ -289,7 +294,7 @@ sus(){
   sort | uniq -c | sort $@;
 }
 
-googlesay(){
+say(){
   curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" | mpg123 -;
 }
 
