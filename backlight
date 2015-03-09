@@ -1,6 +1,6 @@
 #!/bin/bash
 
-on_ac_power
+acpi -a | grep on > /dev/null
 if [ $? -eq 0 ]; then
     xbacklight -set 100 -time 0
 else

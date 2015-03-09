@@ -12,10 +12,10 @@
 #tmpfs   /tmp    tmpfs   nodev,nosuid,size=8G    0   0
 
 # Use this to mount directory in ram
-tmpfs   /ramdisk    tmpfs   nodev,nosuid,size=4G    0   0
+tmpfs   /ramdisk    tmpfs   nodev,nosuid,size=6G    0   0
 
 # Use this to mount swapfile
-#/swap   none    swap    defaults    0   0
+/swapfile   none    swap    defaults    0   0
 
 #https://elearning.hslu.ch/ilias/webdav.php/hslu/ref_2248679/	/ilias/infsec	davfs	user,noauto	0	0
 #https://elearning.hslu.ch/ilias/webdav.php/hslu/ref_2248105/	/ilias/cpe	davfs	user,noauto	0	0

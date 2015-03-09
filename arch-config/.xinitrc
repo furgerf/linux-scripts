@@ -64,6 +64,9 @@ xset r rate 250 35
 # monitor clipboard
 #pmd5(){ xsel -p|md5sum|cut -d' ' -f1;}; while :;do if [[ "$l" != "$( pmd5 )" ]];then xsel -p;echo;l=$( pmd5 );fi ;sleep 1 ; done >> $HOME/.clip_history &
 
+# disable bluetooth
+$HOME/git/linux-scripts/block-bluetooth
+
 # start awesome wm
 exec awesome
 #exec ck-launch-session awesome

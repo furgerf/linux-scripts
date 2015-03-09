@@ -26,7 +26,7 @@ export PATH="$PATH:/opt/android-sdk/tools:/opt/android-sdk/build-tools:/opt/andr
 export HISTSIZE=5000
 export HISTCONTROL=ignoredups
 
-# highlight broken symlinks     
+# highlight broken symlinks
 eval $(dircolors -b) 
 
 # "command not found" hook
@@ -44,6 +44,7 @@ alias grep='grep --color=auto'
 alias df='df -h'
 alias du='du -c -h'
 alias mkdir='mkdir -p -v'
+alias cd='cd -P'
 alias cd..='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -116,6 +117,7 @@ alias :Q='exit'
 alias covremote='rdesktop -u furgerf@coventry.ac.uk -g 1024x650 -k de-ch cu2study.coventry.ac.uk -p 1Tennarvet.'
 
 alias multigource='~/git/linux-scripts/multigource'
+alias gourcevideo='gource -1280x720 -o - | ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libx264 -preset ultrafast -pix_fmt yuv420p -crf 1 -threads 0 -bf 0 gource.mp4'
 alias git-pull='~/git/linux-scripts/git-pull ~/git'
 
 alias image='geeqie'
@@ -267,7 +269,7 @@ pjson() {
 alias labyrinth='while ( true ) ; do if [ $( expr $RANDOM % 2 ) -eq 0 ] ; then echo -ne "\xE2\x95\xB1" ; else echo -ne "\xE2\x95\xB2" ; fi ; done'
 
 alias agora='cd /home/fabian/git/cu/305cde/Agora && execterm "npm start" && execterm vim && git remote update && git status'
-alias dissertation='cd $HOME/git/cu/300com/300com-final-project/dissertation && vim main.tex'
+alias dissertation='cd $HOME/git/cu/300com/300com-final-project/dissertation && pdf main.pdf && vim main.tex'
 
 x(){
     if [ -f $1 ] ; then
@@ -297,4 +299,15 @@ sus(){
 say(){
   curl -A RG translate\.google\.com/translate_tts -d "tl=en&q=$@" | mpg123 -;
 }
+
+# disable flow control (to use ctrl+s in vim)
+stty -ixon
+
+# git
+alias ga='git add'
+alias gc='git commit'
+alias gs='git status'
+alias gd='git diff'
+alias pull='git pull'
+alias push='git push'
 

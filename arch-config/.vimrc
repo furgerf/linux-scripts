@@ -78,7 +78,7 @@ filetype plugin indent on
 syntax on
 
 " key mapping: general
-map <S-T> :tabe 
+map <C-t> :tabe 
 map <F8> :tabn<CR>
 map <S-F8> :tabp<CR>
 
@@ -99,7 +99,6 @@ set grepprg=grep\ -nH\ $*
 let g:tex_flavor = "latex"
 let g:Tex_DefaultTargetFormat='pdf'
 let g:Tex_GotoError=0
-map <m-a> ggVG
 
 
 set clipboard=unnamed
@@ -109,16 +108,13 @@ set t_Co=256
 colorscheme fu
 
 " allow saving files as sudo
-cmap sudow w !sudo tee > /dev/null %
+"cmap sudow w !sudo tee > /dev/null %
 
 set pastetoggle=<F4>
 
 " make j/k move down/up one ROW rather than one LINE
 nmap j gj
 nmap k gk
-
-" unhighlight search results
-nmap \q :nohlsearch<CR>
 
 " show some whitespaces
 set list
@@ -141,8 +137,8 @@ autocmd BufRead,BufNewFile *.md setlocal spell
 set complete+=kspell
 
 " highlight long rows
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn', '\%101v', 100)
+"highlight ColorColumn ctermbg=magenta
+"call matchadd('ColorColumn', '\%101v', 100)
 
 " This rewires n and N to do the highlighing...
 nnoremap <silent> n   n:call HLNext(0.4)<cr>
@@ -160,3 +156,39 @@ function! HLNext (blinktime)
   redraw
 endfunction
 
+" disable ycm in tex
+let g:ycm_filetype_specific_completion_to_disable = { 'tex': 1 }
+
+" NERDTree file filter
+let NERDTreeIgnore = [ '\.bbl$', '\.blg$', '\.aux$', '\.bcf$', '\.dvi$', '\.lof$', '\.lot$', '\.out$', '\.pdf$', '\.toc$', '\.swp$' ]
+
+" map save, close all
+map <C-s> <esc>:w<CR>
+imap <C-s> <esc>:w<CR>a
+map <C-q> <esc>:qa<CR>
+imap <C-q> <esc>:qa<CR>
+
+" map leader
+" unhighlight search results
+map <Leader>q :nohlsearch<CR>
+map <Leader>yy ggVG"*y
+map <Leader>n :NERDTree<CR>
+map <Leader>dr :e ~/dropbox<CR>
+map <Leader>vim :e ~/.vimrc<CR>
+map <Leader>b :e ~/.bashrc<CR>
+map <Leader>rw :%s/\s\+$//<cr>:w<cr>
+map <Leader>w <C-w>w
+
+" Edit another file in the same directory as the current file
+" uses expression to extract path from current file's path
+map <Leader>e :e <C-R>=escape(expand("%:p:h"),' ') . '/'<CR>
+map <Leader>sh :split <C-R>=escape(expand("%:p:h"), ' ') . '/'<CR>
+map <Leader>sv :vnew <C-R>=escape(expand("%:p:h"), ' ') . '/'<CR>
+
+set laststatus=2 " Always show status line.
+set gdefault " assume the /g flag on :s substitutions to replace all matches in a line
+
+" Highlight the status line
+highlight StatusLine ctermfg=darkgray ctermbg=yellow
+
+set nofoldenable    " disable folding

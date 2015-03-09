@@ -140,7 +140,7 @@ local wallpaperTimer
 if os.getenv("AWESOME_BG") then
   gears.wallpaper.maximized(os.getenv("AWESOME_BG"))
 else
-  -- Get the list of files from a directory. Must be all images or folders and non-empty. 
+  -- Get the list of files from a directory. Must be all images or folders and non-empty.
   function scanDir(directory)
     local i, fileList, popen = 0, {}, io.popen
     for filename in popen([[find "]] ..directory.. [[" -type f]]):lines() do
@@ -438,10 +438,10 @@ function(widget, args)
   return " ".. args[1] .. " "
 end, 0.2, "Master")
 volwrapper:set_widget(volwidget)
-volwrapper:connect_signal("button::press", function() 
+volwrapper:connect_signal("button::press", function()
     awful.util.spawn("amixer sset Master toggle")
 end)
-volicon:connect_signal("button::press", function() 
+volicon:connect_signal("button::press", function()
     awful.util.spawn("amixer sset Master toggle")
 end)
 
@@ -491,7 +491,7 @@ vicious.register(battwidget, vicious.widgets.bat,
 function(widget, args)
   fh = assert(io.popen("acpi | cut -d, -f 1,1 | cut -d: -f2,2 | cut -b 2-", "r"))
   local direction = fh:read("*l")
-  fh.close() 
+  fh.close()
   fh = assert(io.popen("acpi | cut -d, -f 3,3 - | cut -b 2-9", "r"))
   local charging_duration = fh:read("*l")
   fh.close()
@@ -602,14 +602,14 @@ function update_pacuwidget ()
 
             pacutimer.timeout = 1800
             pacutimer:again()
-            
+
             return
         end
-       
+
         -- update can proceed, only update bi-hourly from now on
         pacutimer.timeout = 7200
         pacutimer:again()
-        
+
         -- sync pacman
         os.execute("sudo " .. os.getenv("HOME") .. "/git/linux-scripts/awesome/refresh_database > /dev/null &")
 
@@ -642,7 +642,7 @@ function remove_pacu_naughty()
         pacu_naughty = nil
     end
 end
-pacuwrapper:connect_signal("button::press", function() 
+pacuwrapper:connect_signal("button::press", function()
     awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Syau")
     pacuwidget:set_text("")
     remove_pacu_naughty()
@@ -804,12 +804,12 @@ function toggle_capslock ()
         capslock_naughty = nil
     end
 end
-       
+
 
 function clip_translate()
     local clip = awful.util.pread("xclip -o")
     if clip then
-        awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/translate \'" .. clip .."\'", false)   --change path to script       
+        awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/translate \'" .. clip .."\'", false)   --change path to script
     end
 end
 
@@ -825,18 +825,18 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86ScreenSaver", function ()
        awful.util.spawn("slock")
        awful.util.spawn("xset dpms force off")  end),
-    awful.key({ }, "XF86AudioRaiseVolume", function ()
-       awful.util.spawn("amixer sset Master unmute")
-       awful.util.spawn("amixer set Master 3%+") end),
-    awful.key({ }, "XF86AudioLowerVolume", function ()
-       awful.util.spawn("amixer sset Master unmute")
-       awful.util.spawn("amixer set Master 3%-") end),
-    awful.key({ }, "XF86AudioMute", function ()
-       awful.util.spawn("amixer sset Master toggle") end),
-    awful.key({ }, "XF86Display", function ()
-       awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/monitor") end),
-    awful.key({ }, "XF86Sleep", function ()
-        awful.util.spawn("slock") end),
+    --awful.key({ }, "XF86AudioRaiseVolume", function ()
+    --   awful.util.spawn("amixer sset Master unmute")
+    --   awful.util.spawn("amixer set Master 3%+") end),
+    --awful.key({ }, "XF86AudioLowerVolume", function ()
+    --   awful.util.spawn("amixer sset Master unmute")
+    --   awful.util.spawn("amixer set Master 3%-") end),
+    --awful.key({ }, "XF86AudioMute", function ()
+    --   awful.util.spawn("amixer sset Master toggle") end),
+    --awful.key({ }, "XF86Display", function ()
+    --   awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/monitor") end),
+    --awful.key({ }, "XF86Sleep", function ()
+    --    awful.util.spawn("slock") end),
     awful.key({ }, "Print", function ()
         awful.util.spawn("scrot -e 'mv $f /data/image/screenshots/archlinux'") end),
     awful.key({ }, "Caps_Lock", toggle_capslock),
@@ -844,7 +844,7 @@ globalkeys = awful.util.table.join(
     awful.key({"Control"}, "Caps_Lock", toggle_capslock),
     awful.key({modkey}, "Caps_Lock", toggle_capslock),
     awful.key({altkey}, "Caps_Lock", toggle_capslock),
-    awful.key({ modkey, }, "F3",     function () 
+    awful.key({ modkey }, "F3",     function ()
         local fh = io.popen("xbacklight -get | cut -d '.' -f 1")
         local light = fh:read("*l")
         fh:close()
@@ -854,8 +854,9 @@ globalkeys = awful.util.table.join(
             awful.util.spawn("xbacklight -set 0 -time 0")
         end
     end),
+    awful.key({ modkey }, "F4", function () awful.util.spawn("xset dpms force off")  end),
     awful.key({ modkey, "Control" }, "t", function () clip_translate() end),
-    awful.key({ modkey, "Control" }, "w", function () 
+    awful.key({ modkey, "Control" }, "w", function ()
         if (wallpaperTimer ~= nil) then
             local wp = wallpaperList[math.random(1, #wallpaperList)]
             for s = 1, screen.count() do
@@ -864,7 +865,7 @@ globalkeys = awful.util.table.join(
             wallpaperTimer:again()
             end
         end),
-    
+
     -- TAG NAVIGATION
     awful.key({ modkey, }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey, }, "Right",  awful.tag.viewnext       ),
@@ -918,13 +919,13 @@ globalkeys = awful.util.table.join(
                 client.focus:raise()
             end
         end),
---    awful.key({ "Mod1",           }, "Tab",                                                      
+--    awful.key({ "Mod1",           }, "Tab",
 --        function ()
---            alttab.switch(1, "Alt_L", "Tab", "ISO_Left_Tab")                                             
+--            alttab.switch(1, "Alt_L", "Tab", "ISO_Left_Tab")
 --        end),
---    awful.key({ "Mod1", "Shift"   }, "Tab",                                                      
+--    awful.key({ "Mod1", "Shift"   }, "Tab",
 --        function ()
---            alttab.switch(-1, "Alt_L", "Tab", "ISO_Left_Tab")                                            
+--            alttab.switch(-1, "Alt_L", "Tab", "ISO_Left_Tab")
 --        end),
 
     -- LAYOUT MANIPULATION
@@ -936,12 +937,12 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
     awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
-   
+
     -- PROGRAMS
     awful.key({ modkey }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Shift"   }, "Return", function ()
         --[[awful.util.spawn(terminal)
-       
+
         local c1 = awful.client.next(1)
         local c2 = c1
 
@@ -954,7 +955,7 @@ globalkeys = awful.util.table.join(
     end),
     awful.key({ modkey }, "e",      function () awful.util.spawn("thunar -- " .. os.getenv("HOME") .. "/Desktop") end),
     awful.key({ modkey }, "q",      function () menubar.show() end),
-    --awful.key({ modkey }, "r",      function () mypromptbox[mouse.screen]:run() end),  
+    --awful.key({ modkey }, "r",      function () mypromptbox[mouse.screen]:run() end),
     awful.key({ modkey }, "r",      function () awful.util.spawn("bashrun") end),
     awful.key({ modkey }, "x",
               function ()
@@ -963,7 +964,7 @@ globalkeys = awful.util.table.join(
                   awful.util.eval, nil,
                   awful.util.getdir("cache") .. "/history_eval")
               end),
-   
+
     -- SHIFTY
     awful.key({ modkey, "Shift"   }, "d", shifty.del),
     awful.key({ modkey, "Shift"   }, "n", shifty.send_prev),
@@ -979,7 +980,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "a", shifty.add),
     awful.key({ modkey, "Shift"   }, "r", shifty.rename),
     awful.key({ modkey, "Shift"   }, "a", function () shifty.add({nopopup = true}) end),
- 
+
     -- MISC
     -- show/hide wibox
     awful.key({ modkey, "Shift"   }, "f",      function () awful.util.spawn_with_shell("notify-send -t 20000 \"$(fortune)\"") end),
@@ -1072,7 +1073,7 @@ awful.rules.rules = {
         }
     },
     { rule = { name = "File Operation Progress" },
-        properties = { 
+        properties = {
             floating = true
         }
     }
@@ -1207,7 +1208,7 @@ client.connect_signal("focus",
 client.connect_signal("unfocus",
                     function(c)
                       c.border_color = beautiful.border_normal
-                      if not (c.class    == "Vlc") 
+                      if not (c.class    == "Vlc")
                         and not (c.class == "Mirage")
                         and not (c.class == "Plugin-container")
                         --and not (c.name  == "GNU Image Manipulation Program")
@@ -1220,11 +1221,11 @@ client.connect_signal("unfocus",
                     end)
 -- }}}
 
-function init_capslock() 
+function init_capslock()
     local handle = io.popen("xset q | grep Caps | cut -d ' ' -f 10")
     local data = handle:read("*l")
     handle:close()
-    
+
     if data == "on" then
         capslock_naughty = naughty.notify({ text = "Caps Lock", timeout = 0 })
     end
