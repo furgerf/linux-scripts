@@ -4,6 +4,7 @@
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+#[[ -z "$TMUX" ]] && exec tmux # auto-start each session in tmux
 
 # bash texts
 echo -e '\e[0;37mWelcome to the \e[1;34mother side\e[0;37m...\n'
@@ -308,6 +309,10 @@ alias ga='git add'
 alias gc='git commit'
 alias gs='git status'
 alias gd='git diff'
+alias gp='git push'
 alias pull='git pull'
 alias push='git push'
+
+alias tmux='TERM=xterm-256color tmux'
+alias compton-enable='compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D5'
 

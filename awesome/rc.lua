@@ -496,23 +496,30 @@ function(widget, args)
   local charging_duration = fh:read("*l")
   fh.close()
   local direction_sign = args[1]
+  local no_battery = false
   if direction == "Discharging" then
-    direction_sign = "-"
+    --direction_sign = "-"
     chargedesc = " (" .. charging_duration .. " rem)"
   elseif direction == "Charging" and charging_duration ~= "charging" then
-    directon_sign = "+"
+    --direction_sign = "+"
     chargedesc = " (" .. charging_duration .. " rem)"
   elseif direction == "Unknown" or (direction == "Charging" and charging_duration == "charging") then
-    direction_sign = ""
+    --direction_sign = ""
     chargedesc = ""
   elseif direction == "Full" then
     chargedesc = direction_sign
-    direction_sign = ""
+    --direction_sign = ""
   else
-    chargedesc = "UNKNOWN CHARGING DIRECTION: \"" .. direction .. "\""
+    chargedesc = "No Battery"
+    no_battery = true
   end
 
-  local batterypercentage = args[2] .. direction_sign .. "%" .. chargedesc
+  local batterypercentage
+  if no_battery then
+      batterypercentage = direction_sign .. chargedesc
+  else
+      batterypercentage = args[2] .. direction_sign .. "%" .. chargedesc
+  end
   if args[2]<=5 then
     batticon:set_image(beautiful.battery1)
   elseif args[2]>5 and args[2]<=10 then
@@ -583,7 +590,7 @@ arr9 = wibox.widget.textbox()
 arr9:set_text(" ⚫ ")
 
 -- Create a textclock widget
-mytextclock = awful.widget.textclock("%A, %B %e, <span color='#4d79ff'>%H:%M</span>", 60)
+mytextclock = awful.widget.textclock("%A, %B %e, <span color='#4d79ff'>%H:%M</span>", 29)
 calendar2.addCalendarToWidget(mytextclock, "<span color='#4d79ff'>%s</span>")
 tclockwrapper = wibox.widget.background()
 tclockwrapper:set_widget(mytextclock)
@@ -643,7 +650,7 @@ function remove_pacu_naughty()
     end
 end
 pacuwrapper:connect_signal("button::press", function()
-    awful.util.spawn(terminal .. " --geometry=64x20+1148+17 -x yaourt -Syau")
+    awful.util.spawn(terminal .. " -e \"bash -c 'yaourt -Syau; exec bash'\"")
     pacuwidget:set_text("")
     remove_pacu_naughty()
 end)
@@ -1199,6 +1206,7 @@ client.connect_signal("focus",
                         and not (c.class == "Geeqie")
                         and not (c.class == "Ristretto")
                         and not (c.class == "MPlayer")
+                        and not (c.class == "Soffice")
                       then
                         c.opacity = 0.91
                     else
