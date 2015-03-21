@@ -142,6 +142,8 @@ alias windir="cl $HOME/.wine/drive_c/Program\ Files\ \(x86\)/"
 alias sacred="xfce4-terminal --working-directory $HOME/.wine/drive_c/Program\ Files\ \(x86\)/Ascaron\ Entertainment/Sacred\ Underworld/ -x wine Sacred.exe"
 
 alias winmount="mount /dev/sdb1 /win"
+alias winboot="sudo $HOME/git/linux-scripts/winboot"
+
 alias term='xfce4-terminal'
 execterm () {
     #xfce4-terminal -e "env PROMPT_COMMAND; $@ bash"
@@ -315,4 +317,4 @@ alias push='git push'
 
 alias tmux='TERM=xterm-256color tmux'
 alias compton-enable='compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D5'
-
+alias find-broken-symlinks='find . -type l | (while read FN ; do test -e "$FN" || ls -ld "$FN"; done)'

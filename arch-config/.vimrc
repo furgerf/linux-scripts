@@ -189,7 +189,7 @@ set laststatus=2 " Always show status line.
 set gdefault " assume the /g flag on :s substitutions to replace all matches in a line
 
 " Highlight the status line
-highlight StatusLine ctermfg=darkgray ctermbg=yellow
+"highlight StatusLine ctermfg=darkgray ctermbg=yellow
 
 set nofoldenable    " disable folding
 
