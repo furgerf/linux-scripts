@@ -36,7 +36,8 @@ short_units yes
 override_utf8_locale yes
 imlib_cache_size 0
 
-color0 4d79ff
+#color0 4d79ff
+color0 1793D1 # official ARCH color
 
 TEXT
 ${texeci 1800 bash $HOME/1b2_accuweather_conkyweather_font/1b2}${alignc 32}${font Open Sans:size=20}arch${color0}linux$font$color

@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local format = "%Y-%m-%dT%H:%M"
-local fh = io.popen("python2 gcalcli --cal Privat#red --cal Arbeit#magenta --cal HSLU#yellow --cal Running#cyan --cal Squash#green --military --conky --color_date white agenda " .. os.date(format, os.time()) .. " " .. os.date(format, os.time() + 7 * 86400))
+local fh = io.popen("python2 /home/fabian/git/gcalcli/gcalcli --cal Privat#red --cal Arbeit#magenta --cal HSLU#yellow --cal Running#cyan --cal Squash#green --military --conky --color_date white agenda " .. os.date(format, os.time()) .. " " .. os.date(format, os.time() + 7 * 86400))
 
 local datapath = arg[0]:sub(0, #arg[0] - 4) .. "_data"
 
@@ -15,7 +15,7 @@ local lines = 10
 
 while data ~= nil do
     lines = lines - 1
-    
+
     local date = ""
     if data:sub(1, 1) ~= "$" then
         if lines < 0 then
@@ -27,7 +27,7 @@ while data ~= nil do
     local colorstart = data:find("{", 3) - 1
     local colorend = data:find("}", colorstart)
     local color = data:sub(colorstart, colorend)
-    
+
     local time
     local title
     if data:find(":") ~= nil then
@@ -41,7 +41,7 @@ while data ~= nil do
         --print(title)
     end
 
-    
+
     result = result .. "\n" .. date .. "${goto 68}" .. color .. time .. "${goto 100}" .. title
 
     data = fh:read("*l")
