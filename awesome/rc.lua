@@ -188,7 +188,8 @@ shifty.config.tags = {
         --screen      = 2,
     },
    ["➋ ·web·🌏"] = {
-        layout      = awful.layout.suit.floating,
+        --layout      = awful.layout.suit.floating,
+        layout      = awful.layout.suit.fair,
         position    = 2,
         nopopup     = true,
         --leave_kills = true,
@@ -452,9 +453,8 @@ cpuicon:set_image(beautiful.widget_cpu)
 cpuwidget:set_width(8)
 cpuwidget:set_height(10)
 cpuwidget:set_vertical(true)
-cpuwidget:set_border_color("#111111")
-cpuwidget:set_background_color("#000000")
-cpuwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10, 0 }, stops = { { 0, "#8C8C8C" }, { 0.5, "#9C7676" }, {  1, "#730000" } } })
+cpuwidget:set_background_color(beautiful.cpu_bg)
+cpuwidget:set_color(beautiful.cpu_fg)
 vicious.register(cpuwidget, vicious.widgets.cpu, "$1")
 cpuwrapper:set_widget(cpuwidget)
 cpuwrapper:connect_signal("button::press", function()
@@ -590,8 +590,8 @@ arr9 = wibox.widget.textbox()
 arr9:set_text(" ⚫ ")
 
 -- Create a textclock widget
-mytextclock = awful.widget.textclock("%A, %B %e, <span color='#4d79ff'>%H:%M</span>", 29)
-calendar2.addCalendarToWidget(mytextclock, "<span color='#4d79ff'>%s</span>")
+mytextclock = awful.widget.textclock("%A, %B %e, <span color='#A2D4ED'>%H:%M</span>", 29)
+calendar2.addCalendarToWidget(mytextclock, "<span color='#A2D4ED'>%s</span>")
 tclockwrapper = wibox.widget.background()
 tclockwrapper:set_widget(mytextclock)
 
@@ -1207,6 +1207,7 @@ client.connect_signal("focus",
                         and not (c.class == "Ristretto")
                         and not (c.class == "MPlayer")
                         and not (c.class == "Soffice")
+                        and not (c.class == "Gimp")
                       then
                         c.opacity = 0.91
                     else
@@ -1221,6 +1222,7 @@ client.connect_signal("unfocus",
                         and not (c.class == "Plugin-container")
                         --and not (c.name  == "GNU Image Manipulation Program")
                         and not (c.name == "SRF Player - Mozilla Firefox")
+                        and not (c.class == "Gimp")
                         then
                           c.opacity = 0.7
                       else
