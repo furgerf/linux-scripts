@@ -5,7 +5,7 @@ theme.default_themes_path = "/usr/share/awesome/themes"
 theme.colors = {}
 
 theme.colors.white   = "#ffffff"
-theme.colors.grey    = "#dddddd"
+theme.colors.grey    = "#aaaaaa"
 theme.colors.light4  = "#D1E9F6"
 theme.colors.light3  = "#A2D4ED"
 theme.colors.light2  = "#74BEE3"
