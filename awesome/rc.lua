@@ -332,11 +332,11 @@ shifty.config.apps = {
 
 -- {{{ Menu
 myconfigmenu = {
-    { "xinit", editor_cmd .. " " .. os.getenv("HOME") .. "/.xinitrc" },
     { "bash", editor_cmd .. " " .. os.getenv("HOME") .. "/.bashrc" },
     { "awesome", editor_cmd .. " " .. awesome.conffile },
-    { "conky", editor_cmd .. " " .. os.getenv("HOME") .. "/git/linux-scripts/conky/.conkyrc" },
+    { "xinit", editor_cmd .. " " .. os.getenv("HOME") .. "/.xinitrc" },
     { "vim", editor_cmd .. " " .. os.getenv("HOME") .. "/.vimrc" },
+    { "conky", editor_cmd .. " " .. os.getenv("HOME") .. "/git/linux-scripts/conky/.conkyrc" },
 }
 myplacemenu = {
     { "/data", "thunar /data" },
@@ -576,7 +576,7 @@ function update_pacuwidget ()
   os.execute("sudo " .. os.getenv("HOME") .. "/git/linux-scripts/awesome/refresh_database > /dev/null &")
 
   -- get new packages
-  handle = io.popen("yaourt -Qu | wc -l")
+  handle = io.popen("a=$(yaourt -Qu | wc -l) ; b=$(pacman -Qu | grep '\\[ignored\\]' | wc -l) ; echo \"$a-$b\" | bc")
   local count = handle:read("*a")
   handle:close()
   local count = count:sub(1, #count - 1)
@@ -996,6 +996,11 @@ awful.rules.rules = {
     properties = {
       floating = true
     }
+  },
+  { rule = { instance = "plugin-container" },
+    properties = {
+      floating = true
+    }
   }
 }
 -- }}}
@@ -1110,7 +1115,6 @@ function(c)
   if not (c.class    == "Vlc")
     and not (c.class == "Mirage")
     and not (c.class == "Plugin-container")
-    and not (c.class == "supertuxkart")
     and not (c.name == "SRF Player - Mozilla Firefox")
     and not (c.name == "Sacred")
     and not (c.class == "Geeqie")
