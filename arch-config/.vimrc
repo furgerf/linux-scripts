@@ -60,7 +60,7 @@ set formatoptions=c,q,r,t " This is a sequence of letters which describes how
                     "           the current comment leader automatically.
                     " q         Allow formatting of comments with "gq".
                     " r         Automatically insert the current comment leader
-                    "           after hitting <Enter> in Insert mode. 
+                    "           after hitting <Enter> in Insert mode.
                     " t         Auto-wrap text using textwidth (does not apply
                     "           to comments)
 
@@ -78,7 +78,7 @@ filetype plugin indent on
 syntax on
 
 " key mapping: general
-map <C-t> :tabe 
+map <C-t> :tabe
 map <F8> :tabn<CR>
 map <S-F8> :tabp<CR>
 
@@ -89,10 +89,13 @@ autocmd FileType c map <F2> :!gcc -o "%:p:r.out" "%:p" && "%:p:r.out"<CR>
 autocmd FileType lua\|sh map <F2> :!"%:p"<CR>
 
 " key mapping: tex
-autocmd FileType tex map <F2> :!cd %:p:h && rm -f "%:p:r.pdf" && pdflatex "%:p:r.tex" && okular &> /dev/null "%:p:r.pdf" &<CR>
+autocmd FileType tex map <F2> :!cd "%:p:h" && rm -f "%:p:r.pdf" && pdflatex "%:p:r.tex" && okular &> /dev/null "%:p:r.pdf" &<CR>
 
 " key mapping: bib
-autocmd FileType bib map <F2> :!cd %:p:h && for i in *.aux; do bibtex $i; done<CR>
+autocmd FileType bib map <F2> :!cd "%:p:h" && for i in *.aux; do bibtex $i; done<CR>
+
+" key mapping: markdown
+autocmd FileType markdown map <F2> :!cd "%:p:h" && pandoc "%:p" -o "%:p:r.pdf"<CR>
 
 set runtimepath=~/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,~/.vim/after
 set grepprg=grep\ -nH\ $*
@@ -215,3 +218,10 @@ let @b='?BiodataEntrynVnyP3Nzz$*\q9l'
         endif
     endfunction
 
+
+" automatically re-source vimrc
+autocmd! bufwritepost $MYVIMRC source %
+
+" for vim-airline
+set laststatus=2
+let g:airline#extensions#tabline#enabled = 1
