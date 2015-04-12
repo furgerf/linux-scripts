@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#export DISPLAY=:0
+
+modified=$(stat "$HOME/.cron_history" | grep 'Modify' | cut -d ' ' -f 2)
+today=$(date +%Y-%m-%d)
+
+#echo "$modified"
+#echo "$today"
+
+if [[ "$modified" != "$today" ]]; then
+    echo "-----------------------------------------------------------------------------------------------------" >> "$HOME/.cron_history"
+fi
+

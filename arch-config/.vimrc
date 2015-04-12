@@ -4,9 +4,9 @@
 " For multi-byte character support (CJK support, for example):
 "set fileencodings=ucs-bom,utf-8,cp936,big5,euc-jp,euc-kr,gb18030,latin1
 
-set tabstop=4       " Number of spaces that a <Tab> in the file counts for.
+set tabstop=2       " Number of spaces that a <Tab> in the file counts for.
 
-set shiftwidth=4    " Number of spaces to use for each step of (auto)indent.
+set shiftwidth=2    " Number of spaces to use for each step of (auto)indent.
 
 set expandtab       " Use the appropriate number of spaces to insert a <Tab>.
                     " Spaces are used in indents with the '>' and '<' commands
@@ -90,6 +90,8 @@ autocmd FileType lua\|sh map <F2> :!"%:p"<CR>
 
 " key mapping: tex
 autocmd FileType tex map <F2> :!cd "%:p:h" && rm -f "%:p:r.pdf" && pdflatex "%:p:r.tex" && okular &> /dev/null "%:p:r.pdf" &<CR>
+autocmd FileType tex imap <F3> <Esc>:w<CR>\ll<CR>a
+autocmd FileType tex map <F3> :w<CR>\ll<CR>
 
 " key mapping: bib
 autocmd FileType bib map <F2> :!cd "%:p:h" && for i in *.aux; do bibtex $i; done<CR>
@@ -168,6 +170,8 @@ let NERDTreeIgnore = [ '\.bbl$', '\.blg$', '\.aux$', '\.bcf$', '\.dvi$', '\.lof$
 " map save, close all
 map <C-s> <esc>:w<CR>
 imap <C-s> <esc>:w<CR>a
+map <C-c> <esc>:q<CR>
+imap <C-c> <esc>:q<CR>
 map <C-q> <esc>:qa<CR>
 imap <C-q> <esc>:qa<CR>
 
@@ -179,7 +183,7 @@ map <Leader>n :NERDTree<CR>
 map <Leader>dr :e ~/dropbox<CR>
 map <Leader>vim :e ~/.vimrc<CR>
 map <Leader>b :e ~/.bashrc<CR>
-map <Leader>rw :%s/\s\+$//<cr>:w<cr>
+map <Leader>rw :%s/\s\+$//<cr>:nohlsearch<cr>
 map <Leader>w <C-w>w
 
 " Edit another file in the same directory as the current file
@@ -194,7 +198,8 @@ set gdefault " assume the /g flag on :s substitutions to replace all matches in 
 " Highlight the status line
 "highlight StatusLine ctermfg=darkgray ctermbg=yellow
 
-set nofoldenable    " disable folding
+set nofoldenable    " disable foldin
+set foldlevelstart=99
 
 " biodata macro
 let @b='?BiodataEntrynVnyP3Nzz$*\q9l'
@@ -223,5 +228,14 @@ let @b='?BiodataEntrynVnyP3Nzz$*\q9l'
 autocmd! bufwritepost $MYVIMRC source %
 
 " for vim-airline
-set laststatus=2
+"set laststatus=2
 let g:airline#extensions#tabline#enabled = 1
+
+command! Texcount execute "!perl /home/fabian/.vim/plugin/texcount.pl %"
+command! Texcountall execute "!perl /home/fabian/.vim/plugin/tex-count-recursive %:p:h"
+
+" adding pairs of matching characters
+set matchpairs+=<:>,=:;
+
+" add JS syntax highlighting form .jsm
+au BufReadPost *.jsm set syntax=javascript

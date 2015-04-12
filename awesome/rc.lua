@@ -3,7 +3,7 @@ local awful = require("awful")
 require("awful.autofocus")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
-local naughty = require("naughty")
+naughty = require("naughty")
 local menubar = require("menubar")
 local shifty = require("shifty")
 local hints = require("hints")
@@ -133,8 +133,11 @@ end)
 -- {{{ Random Wallpapers
 -- Apply a random wallpaper if not specified in AWESOME_BG
 local wallpaperTimer
+--local staticWallpaper = "/home/fabian/Desktop/wallpaper-vim-1920x1080.png"
 if os.getenv("AWESOME_BG") then
   gears.wallpaper.maximized(os.getenv("AWESOME_BG"))
+elseif staticWallpaper ~= nil then
+  gears.wallpaper.maximized(staticWallpaper)
 else
   -- Get the list of files from a directory. Must be all images or folders and non-empty.
   function scanDir(directory)
@@ -525,15 +528,15 @@ vicious.register(wifiwidget, vicious.widgets.wifi,
     elseif signal > 80 and signal <=100 then
       wifiicon:set_image(beautiful.wifi5)
     else
-      local handle = io.popen("wget -q --tries=1 --timeout=1 --spider http://google.com &> /dev/null ; echo $?")
-      local inet = handle:read("*a")
-      handle:close()
-    if inet:sub(1, #inet - 1) == "0" then
-      wifiicon:set_image(beautiful.ethernet)
-      name = "ethernet"
-    else
+     -- local handle = io.popen("wget -q --tries=1 --timeout=1 --spider http://google.com &> /dev/null ; echo $?")
+     -- local inet = handle:read("*a")
+     -- handle:close()
+    --if inet:sub(1, #inet - 1) == "0" then
+    --  wifiicon:set_image(beautiful.ethernet)
+    --  name = "ethernet"
+    --else
       wifiicon:set_image(beautiful.wifinone)
-    end
+    --end
   end
   wifiicon:set_resize(false)
   return name
@@ -568,8 +571,8 @@ function update_pacuwidget ()
     return
   end
 
-  -- update can proceed, only update bi-hourly from now on
-  pacutimer.timeout = 7200
+  -- update can proceed, only update hourly from now on
+  pacutimer.timeout = 3600
   pacutimer:again()
 
   -- sync pacman
@@ -791,6 +794,8 @@ globalkeys = awful.util.table.join(
   --   awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/monitor") end),
   --awful.key({ }, "XF86Sleep", function ()
   --    awful.util.spawn("slock") end),
+  awful.key({modkey}, "F6", function ()
+      awful.util.spawn(os.getenv("HOME") .. "/git/linux-scripts/compton-toggle") end),
   awful.key({ }, "Print", function ()
       awful.util.spawn("scrot -e 'mv $f /data/image/screenshots/archlinux'") end),
   awful.key({ }, "Caps_Lock", toggle_capslock),
@@ -1122,8 +1127,9 @@ function(c)
     and not (c.class == "MPlayer")
     and not (c.class == "Soffice")
     and not (c.class == "Gimp")
+    and not (c.class == "Gimp*")
     then
-      c.opacity = 0.91
+      c.opacity = 0.93
     else
       c.opacity = 1
     end
@@ -1136,8 +1142,9 @@ function(c)
       and not (c.class == "Plugin-container")
       and not (c.name == "SRF Player - Mozilla Firefox")
       and not (c.class == "Gimp")
+      and not (c.class == "Gimp*")
       then
-        c.opacity = 0.7
+        c.opacity = 0.85
       else
         c.opacity = 1
       end

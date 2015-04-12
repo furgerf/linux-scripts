@@ -2,13 +2,15 @@
 
 export DISPLAY=:0
 
-modified=$(stat $HOME/dropbox/Apps/TrainingLogTest/biodata.xml | grep 'Modify' | cut -d ' ' -f 2)
+modified=$(stat "$HOME"/dropbox/Apps/TrainingLogTest/biodata.xml | grep 'Modify' | cut -d ' ' -f 2)
 today=$(date +%Y-%m-%d)
 
-if [[ "$modified" -ne "$today" ]]; then
+if [[ "$modified" != "$today" ]]; then
     # say "..."
     curl -A RG translate.google.com/translate_tts -d "tl=en&q=Please enter biodata" 2> /dev/null | mpg123 - 2> /dev/null
     # open biodata
     /usr/bin/xfce4-terminal -e "bash -c 'vim $HOME/dropbox/Apps/TrainingLogTest/biodata.xml; exec bash'"
+    # write to STDOUT (for log)
+    echo "Opened biodata.xml"
 fi
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+killall compton || compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D3
+

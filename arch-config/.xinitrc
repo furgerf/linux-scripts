@@ -45,7 +45,7 @@ dropbox &
 $HOME/git/linux-scripts/set_dbus_address
 
 # composite manager
-compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D5
+compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D3
 
 # start thunar in daemon mode
 thunar --daemon &
@@ -64,8 +64,11 @@ xset r rate 250 35
 # monitor clipboard
 #pmd5(){ xsel -p|md5sum|cut -d' ' -f1;}; while :;do if [[ "$l" != "$( pmd5 )" ]];then xsel -p;echo;l=$( pmd5 );fi ;sleep 1 ; done >> $HOME/.clip_history &
 
-# disable bluetooth
-$HOME/git/linux-scripts/block-bluetooth
+# disable bluetooth: MAYBE THAT IS NOT NEEDED :)
+#$HOME/git/linux-scripts/block-bluetooth
+
+# store journal
+sleep 30 && journalctl -p 5 -b -o short-precise --no-pager > /tmp/boot-log &
 
 # start awesome wm
 exec awesome

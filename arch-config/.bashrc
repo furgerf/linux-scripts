@@ -28,7 +28,7 @@ export HISTSIZE=5000
 export HISTCONTROL=ignoredups
 
 # highlight broken symlinks
-eval $(dircolors -b) 
+eval $(dircolors -b)
 
 # "command not found" hook
 source /usr/share/doc/pkgfile/command-not-found.bash
@@ -63,11 +63,11 @@ alias pg='ps -Af | grep $1'         # requires an argument (note: /usr/bin/pg is
 
 # privileged access
 if [ $UID -ne 0 ]; then
-    alias scat='sudo cat'
-    alias svim='sudo vim'
-    alias root='sudo su'
-    alias mount='sudo mount'
-    alias umount='sudo umount'
+  alias scat='sudo cat'
+  alias svim='sudo vim'
+  alias root='sudo su'
+  alias mount='sudo mount'
+  alias umount='sudo umount'
 fi
 
 # ls
@@ -99,7 +99,7 @@ alias paci="/usr/bin/pacman -Si"		# '[i]nfo'		- show information about a package
 alias paclo="/usr/bin/pacman -Qdt"		# '[l]ist [o]rphans'	- list all packages which are orphaned
 alias pacc="sudo /usr/bin/pacman -Scc"		# '[c]lean cache'	- delete all not currently installed package files
 alias paclf="/usr/bin/pacman -Ql"		# '[l]ist [f]iles'	- list all files installed by a given package
-alias pacexpl="/usr/bin/pacman -D --asexp"	# 'mark as [expl]icit'	- mark one or more packages as explicitly installed 
+alias pacexpl="/usr/bin/pacman -D --asexp"	# 'mark as [expl]icit'	- mark one or more packages as explicitly installed
 alias pacimpl="/usr/bin/pacman -D --asdep"	# 'mark as [impl]icit'	- mark one or more packages as non explicitly installed
 # '[r]emove [o]rphans' - recursively remove ALL orphaned packages
 alias pacro="/usr/bin/pacman -Qtdq > /dev/null && sudo /usr/bin/pacman -Rs \$(/usr/bin/pacman -Qtdq | sed -e ':a;N;$!ba;s/\n/ /g')"
@@ -124,7 +124,7 @@ alias git-pull='~/git/linux-scripts/git-pull ~/git'
 alias image='geeqie'
 alias imagefind='find . -name "*" -exec file {} \; | /usr/bin/grep -o -P "^.+: \w+ image"'
 pdf() {
-    okular "$1" &> /dev/null &
+  okular "$1" &> /dev/null &
 }
 #pdfa() {
 #    for i in $1/*.pdf; do echo $i; done &
@@ -146,8 +146,8 @@ alias winboot="sudo $HOME/git/linux-scripts/winboot"
 
 alias term='xfce4-terminal'
 execterm () {
-    #xfce4-terminal -e "env PROMPT_COMMAND; $@ bash"
-    xfce4-terminal -e "bash -c '$@; exec bash'"
+  #xfce4-terminal -e "env PROMPT_COMMAND; $@ bash"
+  xfce4-terminal -e "bash -c '$@; exec bash'"
 }
 
 alias cp='acp -agi'
@@ -157,107 +157,113 @@ alias xclip='xclip -selection c'
 
 alias fucking='sudo'
 
-alias refresh_conky='killall conky ; conky -d -c $HOME/git/linux-scripts/conky/.conkyrc'
+alias refresh_conky='killall conky 2> /dev/null ; conky -d -c $HOME/git/linux-scripts/conky/.conkyrc'
 
 recent() {
-    #if [[ "$1" =~ '^[0-9]+$' ]]; then
-    if [ "$1" -eq "$1" ] 2>/dev/null; then
-        find -maxdepth "$1" -type f -mtime -1 -printf "%T@ - %Tk:%TM - %f\n" | sort -rn | cut -d- -f2-
-    else
-        find -maxdepth 1 -type f -mtime -1 -printf "%T@ - %Tk:%TM - %f\n" | sort -rn | cut -d- -f2-
-    fi
+  #if [[ "$1" =~ '^[0-9]+$' ]]; then
+  if [ "$1" -eq "$1" ] 2>/dev/null; then
+    find -maxdepth "$1" -type f -mtime -1 -printf "%T@ - %Tk:%TM - %f\n" | sort -rn | cut -d- -f2-
+  else
+    find -maxdepth 1 -type f -mtime -1 -printf "%T@ - %Tk:%TM - %f\n" | sort -rn | cut -d- -f2-
+  fi
 }
 
 ## Functions
 # cd and ls in one
 cl() {
-    if [[ -d "$1" ]]; then
-        cd "$1"
-        la
-    else
-        echo "bash: cl: '$1': Directory not found"
-    fi
+  if [[ -d "$1" ]]; then
+    cd "$1"
+    la
+  else
+    echo "bash: cl: '$1': Directory not found"
+  fi
 }
 
 todo() {
-    if [[ ! -f /data/Dropbox/misc/misc/todo.txt ]]; then
-        touch /data/Dropbox/misc/misc/todo.txt	
-    fi
-    if [[ ! -f /data/Dropbox/misc/misc/todo_history.txt ]]; then
-        touch /data/Dropbox/misc/misc/todo_history.txt
-    fi
+  todoFile="/data/Dropbox/misc/misc/todo.txt"
+  todoHistory="/data/Dropbox/misc/misc/todo_history.txt"
+  if [[ ! -f "$todoFile" ]]; then
+    touch "$todoFile"
+  fi
+  if [[ ! -f "$todoHistory" ]]; then
+    touch "$todoHistory"
+  fi
 
-    if [[ $# -eq 0 ]]; then
-        cat -n /data/Dropbox/misc/misc/todo.txt
-    elif [[ "$1" == "-l" ]]; then
-        cat -n /data/Dropbox/misc/misc/todo.txt
-    elif [[ "$1" == "-h" ]]; then
-        cat -n /data/Dropbox/misc/misc/todo_history.txt
-    elif [[ "$1" == "-c" ]]; then
-        echo "" > /data/Dropbox/misc/misc/todo.txt
-    elif [[ "$1" == "-r" ]]; then
-        cat -n /data/Dropbox/misc/misc/todo.txt
-        echo -ne "----------------------------\nType a number to remove: "
-        read NUMBER
-        sed -ie ${NUMBER}d /data/Dropbox/misc/misc/todo.txt
-    else
-        echo "$@" >> /data/Dropbox/misc/misc/todo.txt
-        echo $(date "+%A, %B %d, %Y [%T]") "$@" >> /data/Dropbox/misc/misc/todo_history.txt
-    fi
+  re='^[0-9]+$'
+  if [[ "$#" -eq 0 ]]; then
+    cat -n "$todoFile"
+    echo -ne "----------------------------\nType a number to remove: "
+    read NUMBER
+    sed -ie ${NUMBER}d /data/Dropbox/misc/misc/todo.txt
+  elif [[ "$#" -eq 1 && "$1" == "-l" ]]; then
+    cat -n "$todoFile"
+  elif [[ "$#" -eq 1 && "$1" == "-h" ]]; then
+    cat -n "$todoHistory"
+  elif [[ "$#" -eq 1 && "$1" == "-c" ]]; then
+    echo > "$todoFile"
+    echo > "$todoHistory"
+  elif [[ "$#" -eq 1 && $1 =~ $re ]]; then
+    sed -ie ${1}d /data/Dropbox/misc/misc/todo.txt
+    cat -n "$todoFile"
+  else
+    echo "$@" >> /data/Dropbox/misc/misc/todo.txt
+    echo $(date "+%A, %B %d, %Y [%T]") "$@" >> /data/Dropbox/misc/misc/todo_history.txt
+    cat -n "$todoFile"
+  fi
 }
 
 finished () {
-    sed -i "$1"d /data/Dropbox/misc/misc/todo.txt
+  sed -i "$1"d /data/Dropbox/misc/misc/todo.txt
 }
 
 p4 () {
-    STATUS=0
-    LOOP=1
+  STATUS=0
+  LOOP=1
 
-    while [ "$LOOP" -eq 1 ]; do
-        ping 4.2.2.2
-        STATUS=$?
-        if [ $STATUS -eq 0 ]; then
-           LOOP=0
-        else
-           sleep 1
-        fi
-    done
+  while [ "$LOOP" -eq 1 ]; do
+    ping 4.2.2.2
+    STATUS=$?
+    if [ $STATUS -eq 0 ]; then
+      LOOP=0
+    else
+      sleep 1
+    fi
+  done
 }
 
 p8 () {
-    STATUS=0
-    LOOP=1
+  STATUS=0
+  LOOP=1
 
-    while [ "$LOOP" -eq 1 ]; do
-        ping 8.8.8.8
-        STATUS=$?
-        if [ $STATUS -eq 0 ]; then
-           LOOP=0
-        else
-           sleep 1
-        fi
-    done
+  while [ "$LOOP" -eq 1 ]; do
+    ping 8.8.8.8
+    STATUS=$?
+    if [ $STATUS -eq 0 ]; then
+      LOOP=0
+    else
+      sleep 1
+    fi
+  done
 }
 
 yoghurt () {
-    first=1
+  first=1
 
-    sudo echo "foo" > /dev/null
+  sudo echo "foo" > /dev/null
 
+  ping 8.8.8.8 -c 1 &> /dev/null
+
+  while [ $? -ne 0 ]; do
+    if [ $first -eq 1 ]; then
+      echo "Waiting for connection..."
+      first=0
+    fi
+
+    sleep 1
     ping 8.8.8.8 -c 1 &> /dev/null
+  done
 
-    while [ $? -ne 0 ]; do
-        if [ $first -eq 1 ]; then
-            echo "Waiting for connection..."
-            first=0
-        fi
-
-        sleep 1
-        ping 8.8.8.8 -c 1 &> /dev/null
-    done
-
-    yau
+  yau
 }
 
 alias mirror='mplayer -vf mirror -v tv:// -tv device=/dev/video0:driver=v4l2'
@@ -265,37 +271,35 @@ alias files='file $(/usr/bin/ls -aH)'
 alias speak='time echo \""$@"\" | ( Equalizer || espeak || say -v Fred || cat)' # FIX ME :(
 
 pjson() {
-    python2 $HOME/git/linux-scripts/pjson.py
-    # python2 $HOME/git/linux-scripts/pjson.py | less -X
+  python2 $HOME/git/linux-scripts/pjson.py
+  # python2 $HOME/git/linux-scripts/pjson.py | less -X
 }
 
 alias labyrinth='while ( true ) ; do if [ $( expr $RANDOM % 2 ) -eq 0 ] ; then echo -ne "\xE2\x95\xB1" ; else echo -ne "\xE2\x95\xB2" ; fi ; done'
 
-alias agora='cd /home/fabian/git/cu/305cde/Agora && execterm "npm start" && execterm vim && git remote update && git status'
 alias dissertation='cd $HOME/git/cu/300com/300com-final-project/dissertation && pdf main.pdf && vim main.tex'
-
 x(){
-    if [ -f $1 ] ; then
-            case $1 in
-                    *.tar.bz2)   tar xvjf $1    ;;
-                    *.tar.gz)    tar xvzf $1    ;;
-                    *.bz2)       bunzip2 $1     ;;
-                    *.rar)       unrar x $1     ;;
-                    *.gz)        gunzip $1      ;;
-                    *.tar)       tar xvf $1     ;;
-                    *.tbz2)      tar xvjf $1    ;;
-                    *.tgz)       tar xvzf $1    ;;
-                    *.zip)       unzip $1       ;;
-                    *.Z)         uncompress $1  ;;
-                    *.7z)        7z x $1        ;;
-                    *)           echo "Unable to extract '$1'" ;;
-            esac
-    else
-            echo "'$1' is not a valid file"
-    fi
+  if [ -f "$1" ] ; then
+    case "$1" in
+      *.tar.bz2)   tar xvjf "$1"    ;;
+      *.tar.gz)    tar xvzf "$1"    ;;
+      *.bz2)       bunzip2 "$1"     ;;
+      *.rar)       unrar x "$1"     ;;
+      *.gz)        gunzip "$1"      ;;
+      *.tar)       tar xvf "$1"     ;;
+      *.tbz2)      tar xvjf "$1"    ;;
+      *.tgz)       tar xvzf "$1"    ;;
+      *.zip)       unzip "$1"       ;;
+      *.Z)         uncompress "$1"  ;;
+      *.7z)        7z x "$1"        ;;
+      *)           echo "Unable to extract '$1'" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
 }
 
-sus(){ 
+sus(){
   sort | uniq -c | sort $@;
 }
 
@@ -311,10 +315,29 @@ alias ga='git add'
 alias gc='git commit'
 alias gs='git status'
 alias gd='git diff'
+alias gf='git fetch'
 alias gp='git push'
 alias pull='git pull'
 alias push='git push'
 
 alias tmux='TERM=xterm-256color tmux'
-alias compton-enable='compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D5'
+alias compton-enable='compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D3'
 alias find-broken-symlinks='find . -type l | (while read FN ; do test -e "$FN" || ls -ld "$FN"; done)'
+
+raspi-backup(){
+  echo "Device to back up: "
+  read DEVICE
+
+  sudo dd bs=4M if="$DEVICE" | gzip > raspi-image-$(date +%Y-%m-%d).gz
+}
+
+raspi-restore(){
+  echo "Device to restore to: "
+  read DEVICE
+
+  echo "Backup file: "
+  read BACKUP
+
+  gzip -dc "$BACKUP" | dd bs=4M of="$DEVICE"
+}
+
