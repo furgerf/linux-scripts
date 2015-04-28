@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# create gource from multiple repositories
+
 # prepare
 i=1
 echo "" > multigource_data

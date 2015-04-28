@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# pretty json formatting
+
 import json
 import sys
 

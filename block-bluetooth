@@ -1,4 +1,6 @@
 #!/bin/bash
 
+# this is in its own script so that only this exact command
+# can be allowed to be executed by non-root users
 sudo rfkill block bluetooth
 

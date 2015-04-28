@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# retrieves the wan address
+
 a=$(wget -nv -O - http://ip.tupeux.com | tail)
 
 if [[ "$a" == "" ]]; then

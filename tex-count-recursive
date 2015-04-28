@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# recursively count words in .tex files
+
 CNT=0
 
 my_ls() {

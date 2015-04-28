@@ -4,9 +4,6 @@
 # files containing private data
 timetable_helper.sh
 
-# su files
-refresh_database
-
 # vim swap files
 *.swp
 

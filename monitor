@@ -1,15 +1,17 @@
 #!/bin/bash
 
+# switch between 1-monitor- and 2-monitor-mode
+
 IN="LVDS1"
 EXT="VGA1"
 
 # see whether external monitor is connected
 if (xrandr | grep "$EXT disconnected"); then
-    xrandr --output $EXT --off 
+    xrandr --output $EXT --off
 else
     # gets status of external monitor
     SND=$(xrandr | grep "\*"| sed -n '2p')
-    
+
     if [[ "$SND" = "" ]]; then
         # if status is empty it's disabled: enable external monitor
         xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --auto --pos 1602x0

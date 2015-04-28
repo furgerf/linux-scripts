@@ -1,7 +1,11 @@
 #!/bin/bash
 
+# toggles between CPU govenors "powersave" and "performance"
+
+# retrieve current govenor
 gov=$(cpupower frequency-info | sed -n "9p" | cut -d '"' -f 2)
 
+# toggle govenor
 if [[ $gov == "performance" ]]; then
     sudo cpupower frequency-set -g "powersave"
     notify-send "Set CPU govenor to powersave."

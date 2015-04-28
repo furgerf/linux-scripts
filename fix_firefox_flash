@@ -1,3 +1,5 @@
 #!/bin/bash
 
+# carry out sed-replacement in library file so that flash fullscreen doesn't close after losing focus
 sudo sed -i -re s/_NET_ACTIVE_WINDOW/XNET_ACTIVE_WINDOW/ /usr/lib/mozilla/plugins/libflashplayer.so
+

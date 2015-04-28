@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# recursively checks directories to see whether they're git repositories
+# if so, the repo is checked to see whether there are unpushed commits
 RES=""
 
 my_ls() {

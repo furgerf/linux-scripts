@@ -4,12 +4,15 @@ if [ -r "$HOME/.dbus/Xdbus" ]; then
     . "$HOME/.dbus/Xdbus"
 fi
 
+# execute command and store command output
 "$@" 1> /tmp/out 2> /tmp/err
 
+# get output, error, and date
 OUT=$(cat /tmp/out)
 ERR=$(cat /tmp/err)
 DATE=$(date "+%A, %B %d, %Y [%T]")
 
+# update .cron history
 echo "*** $DATE $*" >> "$HOME/.cron_history"
 
 if [ "$OUT" ]; then

@@ -1,12 +1,15 @@
 #!/bin/bash
 
+# gathers information about currently playing music in clementine
+# and outputs the information in conky format
+
 radiocover=$1
 
 coverXoffset=600
 
 # find out whether clementine is running
 running=$(dbus-send --session --dest=org.freedesktop.DBus --type=method_call --print-reply /org/freedesktop/DBus org.freedesktop.DBus.ListNames | grep clementine)
-if [ "$running" == "" ]; then    
+if [ "$running" == "" ]; then
     exit 0
 fi
 

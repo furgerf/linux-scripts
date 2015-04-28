@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#params: color1, color2, min, max, value
+# outputs a number value in a color depending on the value's relative
+# position between min and max and the two colors in conky format
+# params: color1, color2, min, max, value
 
 color1="$1"
 color2="$2"

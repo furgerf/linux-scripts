@@ -2,9 +2,11 @@
 
 export DISPLAY=:0
 
+# get dates: last modified of biodata file and today
 modified=$(stat "$HOME"/dropbox/Apps/TrainingLogTest/biodata.xml | grep 'Modify' | cut -d ' ' -f 2)
 today=$(date +%Y-%m-%d)
 
+# if the file hasn't been modified today, do stuff
 if [[ "$modified" != "$today" ]]; then
     # say "..."
     curl -A RG translate.google.com/translate_tts -d "tl=en&q=Please enter biodata" 2> /dev/null | mpg123 - 2> /dev/null

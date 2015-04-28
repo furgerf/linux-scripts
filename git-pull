@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# recursively checks all directories
+# if the directory is a git repository, it queries the user whether the repo should be pulled
+
 my_ls() {
     # save current directory then cd to "$1"
     pushd "$1" >/dev/null

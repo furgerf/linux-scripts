@@ -1,6 +1,9 @@
 #!/bin/bash
 
+# check whether ac is connected
 acpi -a | grep on > /dev/null
+
+# set backlight accordingly
 if [ $? -eq 0 ]; then
     xbacklight -set 100 -time 0
 else
