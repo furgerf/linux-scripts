@@ -1,4 +1,8 @@
 #!/usr/bin/bash
 
-extlinux --once windows /boot/syslinux && echo reboot > /sys/power/disk && echo disk > /sys/power/state
+if [[ "$1" == "-h" ]]; then
+  extlinux --once windows /boot/syslinux && echo reboot > /sys/power/disk && echo disk > /sys/power/state
+else
+  extlinux --once windows /boot/syslinux && reboot
+fi
 
