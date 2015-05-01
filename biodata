@@ -8,6 +8,10 @@ today=$(date +%Y-%m-%d)
 
 # if the file hasn't been modified today, do stuff
 if [[ "$modified" != "$today" ]]; then
+    if [[ -f "$HOME"/dropbox/Apps/TrainingLogTest/.biodata.xml.swp ]]; then
+      exit 0
+    fi
+
     # say "..."
     curl -A RG translate.google.com/translate_tts -d "tl=en&q=Please enter biodata" 2> /dev/null | mpg123 - 2> /dev/null
     # open biodata
