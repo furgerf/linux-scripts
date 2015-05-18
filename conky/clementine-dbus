@@ -21,10 +21,10 @@ pos=$(qdbus org.mpris.clementine /Player org.freedesktop.MediaPlayer.PositionGet
 if [ "$data" != "" ]; then
     # print header
 
-    rp=$(echo "$data" | grep "location: " | grep "radioparadise")
+    radio=$(echo "$data" | grep "location: " | grep "radio")
     location=$(echo "$data" | grep "location: " | cut -b 11-)
 
-    if [ "$rp" = "" ]; then
+    if [ "radio" = "" ]; then
         # not listening to RP
         # format times
         sec=$((pos / 1000))
@@ -36,7 +36,11 @@ if [ "$data" != "" ]; then
         forpos=$min':'$zero$sec
         zero=''
         sec=$(echo "$data" | grep "mtime: " | cut -b 8-)
-        posperc=$((pos * 100 / sec))
+        if [[ "$sec" -ne 0 ]]; then
+            posperc=$((pos * 100 / sec))
+        else
+            posperc=0
+        fi
         sec=$((sec / 1000))
         min=$((sec / 60))
         sec=$((sec - 60 * min))
@@ -62,7 +66,7 @@ if [ "$data" != "" ]; then
     echo -n "$end\${goto 74}Title:\${goto 116}$begin"
     echo -n "$data" | grep 'title: ' | cut -b 8-
 
-    if [ "$rp" = "" ]; then
+    if [ "radio" = "" ]; then
         # album
         echo -n "$end\${goto 74}Album:\${goto 116}$begin"
         echo -n "$data" | grep 'album: ' | cut -b 8-
@@ -87,7 +91,7 @@ if [ "$data" != "" ]; then
     fi
 
     # cover
-    if [ "$rp" != "" ] && [ "$radiocover" != "" ]; then
+    if [ "radio" != "" ] && [ "$radiocover" != "" ]; then
         # use radio cover?
         echo -n "\${image $radiocover -p 0,$coverXoffset -s 62x62 -n}"
     else
