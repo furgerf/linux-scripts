@@ -24,7 +24,7 @@ if [ "$data" != "" ]; then
     radio=$(echo "$data" | grep "location: " | grep "radio")
     location=$(echo "$data" | grep "location: " | cut -b 11-)
 
-    if [ "radio" = "" ]; then
+    if [ "$radio" = "" ]; then
         # not listening to RP
         # format times
         sec=$((pos / 1000))
@@ -66,7 +66,7 @@ if [ "$data" != "" ]; then
     echo -n "$end\${goto 74}Title:\${goto 116}$begin"
     echo -n "$data" | grep 'title: ' | cut -b 8-
 
-    if [ "radio" = "" ]; then
+    if [ "$radio" = "" ]; then
         # album
         echo -n "$end\${goto 74}Album:\${goto 116}$begin"
         echo -n "$data" | grep 'album: ' | cut -b 8-
@@ -82,16 +82,16 @@ if [ "$data" != "" ]; then
         fi
     else
         echo -n "$end\${goto 74}Stream:\${goto 116}$begin"
-        echo -n "Radio Paradise$end"
+        echo -n "$location$end"
         if [ "$stat" -eq 0 ]; then
-            echo -en "\n\n\${goto 74}$location"
+            echo -en "\n\n\${alignc}\${font Open Sans:Bold:size=10}* Streaming *\$font"
         else
             echo -en "\n\n\${alignc}PAUSED"
         fi
     fi
 
     # cover
-    if [ "radio" != "" ] && [ "$radiocover" != "" ]; then
+    if [ "$radio" != "" ] && [ "$radiocover" != "" ]; then
         # use radio cover?
         echo -n "\${image $radiocover -p 0,$coverXoffset -s 62x62 -n}"
     else
