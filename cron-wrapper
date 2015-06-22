@@ -4,6 +4,9 @@ if [ -r "$HOME/.dbus/Xdbus" ]; then
     . "$HOME/.dbus/Xdbus"
 fi
 
+# ensure new-day has been run
+new-day
+
 # execute command and store command output
 "$@" 1> /tmp/out 2> /tmp/err
 
