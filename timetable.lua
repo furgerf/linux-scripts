@@ -49,7 +49,7 @@ end
 
 
 os.execute("killall wget &> /dev/null")
-os.execute("./timetable_helper.sh")
+os.execute("./timetable-helper.sh")
 
 local skip = true
 
