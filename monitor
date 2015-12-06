@@ -5,18 +5,37 @@
 IN="LVDS1"
 EXT="VGA1"
 
-# see whether external monitor is connected
-if (xrandr | grep "$EXT disconnected"); then
-    xrandr --output $EXT --off
-else
-    # gets status of external monitor
-    SND=$(xrandr | grep "\*"| sed -n '2p')
+# apparently, each enabled monitor produces a line containing a star in xrandr
+# so, retrieve the number of enabled monitors
+COUNT=$(xrandr | grep "\*" | wc -l)
 
-    if [[ "$SND" = "" ]]; then
+case $1 in
+  enable)
+    # see whether external monitor is connected
+    if (xrandr | grep "$EXT disconnected"); then
+      xrandr --output $EXT --off
+    else
+      xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --auto --pos 1602x0
+    fi
+    ;;
+  disable)
+    xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --off
+    ;;
+  *)
+    # toggle
+
+    # see whether external monitor is connected
+    if (xrandr | grep "$EXT disconnected"); then
+      xrandr --output $EXT --off
+    else
+      if [ "$COUNT" -eq 1 ]; then
         # if status is empty it's disabled: enable external monitor
         xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --auto --pos 1602x0
-    else
+      else
         # status is not empty it's enabled: disable external monitor
         xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --off
+      fi
     fi
-fi
+    ;;
+esac
+
