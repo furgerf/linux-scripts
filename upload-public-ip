@@ -1,0 +1,6 @@
+#!/bin/bash
+
+WAN=$(get-wan 2> /dev/null)
+echo $WAN > /tmp/$1-ip
+dropbox_uploader.sh upload /tmp/$1-ip /
+
