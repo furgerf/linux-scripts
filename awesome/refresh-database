@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# updates the pacman database
-# this is in its own script so that only this exact command
-# can be allowed to be executed by non-root users
-pacman -Sy
-

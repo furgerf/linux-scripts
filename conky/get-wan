@@ -2,7 +2,7 @@
 
 # retrieves the wan address
 
-a=$(wget -nv -O - http://ip.tupeux.com | tail)
+a=$(wget -nv -O - http://ip.tupeux.com 2> /dev/null | tail)
 
 if [[ "$a" == "" ]]; then
     echo No Address
