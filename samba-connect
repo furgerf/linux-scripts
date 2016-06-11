@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+if ping raspi -c 1 &> /dev/null ; then
+  #sudo mount -t cifs //raspi/home  /mnt/alarmpi/home/  -o credentials=/root/.samba-credentials
+  #sudo mount -t cifs //raspi/1tb   /mnt/alarmpi/1tb/   -o credentials=/root/.samba-credentials
+  sudo mount -t cifs //raspi/1.5tb /mnt/alarmpi/1.5tb/ -o credentials=/root/.samba-credentials
+  #sudo mount -t cifs //raspi/2tb   /mnt/alarmpi/2tb/   -o credentials=/root/.samba-credentials
+
+  notify-send 'Connected to Samba shares'
+else
+  notify-send 'Couldnt connect to Samba shares'
+fi
+
