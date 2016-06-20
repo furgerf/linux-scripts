@@ -1,0 +1,40 @@
+#!/usr/bin/bash
+
+LOCAL_TORRENTS_DIR="/data/torrents/"
+RASPI_TORRENTS="/mnt/alarmpi/1.5tb/raspi/torrents/*$1*"
+TEMP_DIRECTORY_NAME="temp"
+
+# case-insensitive bash-wildcard-expansion
+shopt -s nocaseglob
+
+# get number of matching files, excluding temp (if it matches)
+FILE_COUNT=$(ls -ld $RASPI_TORRENTS | wc -l)
+if echo $RASPI_TORRENTS | grep $TEMP_DIRECTORY_NAME -q ;
+then
+  ((FILE_COUNT--))
+fi
+
+echo Found $FILE_COUNT files that match and could be transferred.
+
+for torrent in $RASPI_TORRENTS;
+do
+  file=$(basename "$torrent")
+  if [ "$file" == "$TEMP_DIRECTORY_NAME" ];
+  then
+    continue
+  fi
+
+  echo Move \`$file\`?
+  read answer
+  answer=${answer,,}
+
+  if [ "$answer" == "y" ] || [ "$answer" == "yes" ];
+  then
+    echo -n Moving $torrent to $LOCAL_TORRENTS_DIR...
+    mv $torrent $LOCAL_TORRENTS_DIR
+    echo " done!"
+  fi
+done
+
+echo Done processing files!
+
