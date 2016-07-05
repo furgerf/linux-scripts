@@ -31,7 +31,7 @@ do
   if [ "$answer" == "y" ] || [ "$answer" == "yes" ];
   then
     echo -n Moving $torrent to $LOCAL_TORRENTS_DIR...
-    mv $torrent $LOCAL_TORRENTS_DIR
+    mv "$torrent" $LOCAL_TORRENTS_DIR
     echo " done!"
   fi
 done
