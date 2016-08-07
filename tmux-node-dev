@@ -1,0 +1,55 @@
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+  echo "Please specify the directory '~/git/XYZ' of the node project"
+  exit 0
+fi
+
+DIR="$1"
+SESSION="dev-$DIR"
+DIR="$HOME/git/$DIR"
+DOTFILES="$HOME/git/dotfiles"
+ATTACH="tmux -2 attach -t $SESSION"
+
+function activate-mongodb () {
+  MONGOSERVICE="mongodb.service"
+  if ! systemctl is-active "$MONGOSERVICE" &> /dev/null; then
+    echo "Activate mongodb service?"
+    read ANSWER
+
+    if [ "$ANSWER" == "y" ] || [ "$ANSWER" == "yes" ]; then
+      systemctl start "$MONGOSERVICE"
+    fi
+  fi
+}
+
+if tmux has-session -t "$SESSION"; then
+  while true; do
+    echo "Session already exists. Attach/kill? (a/k)"
+    read ANSWER
+
+    if [ "$ANSWER" == "a" ]; then
+      $ATTACH
+      exit 0
+    fi
+    if [ "$ANSWER" == "k" ]; then
+      tmux kill-session -t "$SESSION"
+      break
+    fi
+  done
+fi
+
+activate-mongodb
+
+cd "$DIR"
+tmux new-session -s "$SESSION" -n 'vim' -d 'vim -S; bash -i'
+
+tmux new-window -n 'run' -d
+tmux split-window -v -t 'run' -d 'npm start; bash -i'
+
+tmux new-window -n 'git' -d 'git status; bash -i'
+tmux split-window -h -t 'git' -c "$DOTFILES" -d 'git status; bash -i'
+
+$ATTACH
+cd -
+
