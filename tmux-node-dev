@@ -42,10 +42,12 @@ fi
 activate-mongodb
 
 cd "$DIR"
-tmux new-session -s "$SESSION" -n 'vim' -d 'vim -S; bash -i'
+tmux new-session -s "$SESSION" -n 'vim' -d
+tmux send-keys -t "$SESSION:vim" 'vim -S '
 
 tmux new-window -n 'run' -d
-tmux split-window -v -t 'run' -d 'npm start; bash -i'
+tmux split-window -v -t 'run' -d #'npm start; bash -i'
+tmux send-keys -t "$SESSION:run.2" 'npm start '
 
 tmux new-window -n 'git' -d 'git status; bash -i'
 tmux split-window -h -t 'git' -c "$DOTFILES" -d 'git status; bash -i'
