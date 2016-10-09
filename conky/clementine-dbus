@@ -5,7 +5,7 @@
 
 radiocover=$1
 
-coverXoffset=640
+coverXoffset=432
 
 # find out whether clementine is running
 running=$(dbus-send --session --dest=org.freedesktop.DBus --type=method_call --print-reply /org/freedesktop/DBus org.freedesktop.DBus.ListNames | grep clementine)

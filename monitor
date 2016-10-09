@@ -9,31 +9,40 @@ EXT="VGA1"
 # so, retrieve the number of enabled monitors
 COUNT=$(xrandr | grep "\*" | wc -l)
 
+external-enable () {
+  xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --pos 0x1085 \
+    --output $EXT --auto
+}
+
+external-disable () {
+  xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" \
+    --output $EXT --off
+}
+
 case $1 in
   enable)
-    # see whether external monitor is connected
+    # turn off external monitor if disconnected
     if (xrandr | grep "$EXT disconnected"); then
       xrandr --output $EXT --off
     else
-      xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --auto --pos 1602x0
+      external-enable
     fi
     ;;
   disable)
-    xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --off
+    external-disable
     ;;
   *)
     # toggle
-
-    # see whether external monitor is connected
+    # turn off external monitor if disconnected
     if (xrandr | grep "$EXT disconnected"); then
       xrandr --output $EXT --off
     else
       if [ "$COUNT" -eq 1 ]; then
         # if status is empty it's disabled: enable external monitor
-        xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --auto --pos 1602x0
+        external-enable
       else
         # status is not empty it's enabled: disable external monitor
-        xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --output $EXT --off
+        external-disable
       fi
     fi
     ;;
