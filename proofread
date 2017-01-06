@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ "$1" = "" ]; then
+ echo "usage: `basename $0` <file> ..."
+ exit
+fi
+
+echo "weasel words: "
+sh $(dirname $0)/proof-reading/weasel $1
+echo
+echo "passive voice: "
+sh $(dirname $0)/proof-reading/passive $1
+echo
+echo "duplicates: "
+perl $(dirname $0)/proof-reading/duplicates $1
+
