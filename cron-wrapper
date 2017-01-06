@@ -14,18 +14,19 @@ new-day
 OUT=$(cat /tmp/out)
 ERR=$(cat /tmp/err)
 DATE=$(date "+%A, %B %d, %Y [%T]")
+LOG="/var/log/cron-history"
 
 # update .cron history
-echo "*** $DATE $*" >> "$HOME/.cron_history"
+echo "*** $DATE $*" >> $LOG
 
 if [ "$OUT" ]; then
     notify-send -u low "$OUT"
-    echo "$OUT" >> "$HOME/.cron_history"
+    echo "$OUT" >> $LOG
 fi
 
 if [ "$ERR" ]; then
     CMD="Error while running cron task \"$*\":"$'\n'"$ERR"
     notify-send -u critical "$CMD"
-    echo "--> ERROR: $ERR" >> "$HOME/.cron_history"
+    echo "--> ERROR: $ERR" >> $LOG
 fi
 
