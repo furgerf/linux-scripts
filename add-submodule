@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# check whether we got the expected number of arguments
+if [ "$#" == 0 ] || [ "$#" -gt 2 ]; then
+  cat << EOM
+  Add a git submodule from a GitHub HTTPS URL to the current repo.
+
+  The URL is converted to use SSH instead of HTTPS.
+  The submodule is checked out in its own subdirectory.
+  Tabs are replaced with spaces in the relevant .gitmodules.
+
+  Usage: $(basename "$0") GITHUB_URL [SUBMODULE_PATH]
+EOM
+  exit 1
+fi
+
+# check whether we're currently in a git directory
+if ! GIT_DIR=$(git rev-parse --show-toplevel 2> /dev/null); then
+  echo "Must be in git dir to add submodule!"
+  exit 1
+fi
+
+# check whether we got a https github URL
+if ! [[ $1 =~ ^https://github.com/ ]]; then
+  echo "Must use a HTTPS URL from GitHub"
+  exit 1
+fi
+
+URL="git@github.com:${1:19}"
+REPO_NAME=${URL##*/}
+MODULE_PATH="${2%/}/$REPO_NAME"
+COMMAND="git submodule add $URL $MODULE_PATH"
+GIT_MODULES="$GIT_DIR/.gitmodules"
+
+echo "Executing \`$COMMAND\`..."
+eval "$COMMAND"
+
+echo "Replacing tabs with spaces in $GIT_MODULES..."
+sed -i 's/\t/  /g' "$GIT_MODULES"
+
