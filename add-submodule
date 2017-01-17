@@ -28,7 +28,12 @@ fi
 
 URL="git@github.com:${1:19}"
 REPO_NAME=${URL##*/}
-MODULE_PATH="${2%/}/$REPO_NAME"
+if [ -z "$2" ]; then
+  PATH_ARG="."
+else
+  PATH_ARG="${2%/}"
+fi
+MODULE_PATH="$PATH_ARG/$REPO_NAME"
 COMMAND="git submodule add $URL $MODULE_PATH"
 GIT_MODULES="$GIT_DIR/.gitmodules"
 
@@ -37,4 +42,7 @@ eval "$COMMAND"
 
 echo "Replacing tabs with spaces in $GIT_MODULES..."
 sed -i 's/\t/  /g' "$GIT_MODULES"
+
+echo "Adding $GIT_MODULES to index..."
+git add "$GIT_MODULES"
 
