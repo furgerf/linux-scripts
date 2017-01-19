@@ -9,30 +9,30 @@ shopt -s nocaseglob
 
 # get number of matching files, excluding temp (if it matches)
 FILE_COUNT=$(ls -ld $RASPI_TORRENTS | wc -l)
-if echo $RASPI_TORRENTS | grep $TEMP_DIRECTORY_NAME -q ;
-then
+# shellcheck disable=SC2086
+# (we intend to expand the glob here)
+if echo $RASPI_TORRENTS | grep "$TEMP_DIRECTORY_NAME" -q ; then
   ((FILE_COUNT--))
 fi
 
-echo Found $FILE_COUNT files that match and could be transferred.
+echo "Found $FILE_COUNT files that match and could be transferred."
 
 for torrent in $RASPI_TORRENTS;
 do
   file=$(basename "$torrent")
-  if [ "$file" == "$TEMP_DIRECTORY_NAME" ];
-  then
+  if [ "$file" == "$TEMP_DIRECTORY_NAME" ]; then
     continue
   fi
 
-  echo Move \`$file\`?
-  read answer
+  echo "Move \`$file\`?"
+  read -r answer
   answer=${answer,,}
 
-  if [ "$answer" == "y" ] || [ "$answer" == "yes" ];
-  then
-    echo -n Moving $torrent to $LOCAL_TORRENTS_DIR...
-    mv "$torrent" $LOCAL_TORRENTS_DIR
-    echo " done!"
+  if [ "$answer" == "y" ] || [ "$answer" == "yes" ]; then
+    echo "Moving $torrent to $LOCAL_TORRENTS_DIR..."
+    rsync -avz --progress --remove-source-files "$torrent" $LOCAL_TORRENTS_DIR \
+      && rmdir "$torrent"
+    echo "... done!"
   fi
 done
 
