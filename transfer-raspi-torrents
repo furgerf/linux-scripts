@@ -4,6 +4,8 @@ LOCAL_TORRENTS_DIR="/data/torrents/"
 RASPI_TORRENTS="/mnt/alarmpi/1.5tb/raspi/torrents/*$1*"
 TEMP_DIRECTORY_NAME="temp"
 
+MV_CMD_NAMES=('MV' 'RSYNC')
+
 # case-insensitive bash-wildcard-expansion
 shopt -s nocaseglob
 
@@ -24,14 +26,26 @@ do
     continue
   fi
 
-  echo "Move \`$file\`?"
+  # determine whether or not to use rsync:
+  # - use mv if the torrent is a directory and has subdirectories
+  # - use rsync if the torrent has no subdirectories (or is no directory)
+  [ "$(find "$torrent" -type d | wc -l)" -gt 1 ]
+  mv_cmd_index=$?
+
+  echo "Use ${MV_CMD_NAMES[$mv_cmd_index]} to move \`$file\`?"
   read -r answer
   answer=${answer,,}
 
   if [ "$answer" == "y" ] || [ "$answer" == "yes" ]; then
     echo "Moving $torrent to $LOCAL_TORRENTS_DIR..."
-    rsync -avz --progress --remove-source-files "$torrent" $LOCAL_TORRENTS_DIR \
-      && rmdir "$torrent"
+
+    if  [ $mv_cmd_index -eq 0 ]; then
+      mv "$torrent" $LOCAL_TORRENTS_DIR
+    else
+      rsync -avz --progress --remove-source-files "$torrent" $LOCAL_TORRENTS_DIR \
+        && rmdir "$torrent"
+    fi
+
     echo "... done!"
   fi
 done
