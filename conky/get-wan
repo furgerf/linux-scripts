@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # retrieves the wan address
-# alternatively: `curl -s ifconfig.co`
 
-a=$(wget -nv -O - http://ip.tupeux.com 2> /dev/null | tail)
+a=$(curl -s ifconfig.co)
 
 if [[ "$a" == "" ]]; then
     echo No Address
