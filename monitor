@@ -16,8 +16,8 @@ for out in $ENABLED; do
 done
 
 external-enable () {
-  xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect" \
-    --output "$EXT" --auto --pos 0x1085
+  xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect" --pos 0x1085 \
+    --output "$EXT" --auto
 }
 external-disable () {
   xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect" \
