@@ -2,48 +2,43 @@
 
 # switch between 1-monitor- and 2-monitor-mode
 
+# get names and number of currently enabled outputs
 IN="LVDS1"
-EXT="VGA1"
+EXT="$(xrandr | egrep '\bconnected' | cut -d' ' -f1 | grep -v "$IN" | head -n 1)"
+ENABLED=$(xrandr | grep "\*" | cut -d' ' -f1)
+COUNT=$(xrandr | grep -c "\*")
 
-# apparently, each enabled monitor produces a line containing a star in xrandr
-# so, retrieve the number of enabled monitors
-COUNT=$(xrandr | grep "\*" | wc -l)
+# turn off all enabled external monitors that are disconnected
+for out in $ENABLED; do
+  if (xrandr | grep "$out disconnected"); then
+    xrandr --output "$out" --off
+  fi
+done
 
 external-enable () {
-  xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" --pos 0x1085 \
-    --output $EXT --auto
+  xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect" \
+    --output "$EXT" --auto --pos 0x1085
 }
-
 external-disable () {
-  xrandr --output $IN --auto --primary --set "scaling mode" "Full aspect" \
-    --output $EXT --off
+  xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect" \
+    --output "$EXT" --off
 }
 
 case $1 in
   enable)
-    # turn off external monitor if disconnected
-    if (xrandr | grep "$EXT disconnected"); then
-      xrandr --output $EXT --off
-    else
-      external-enable
-    fi
+    external-enable
     ;;
   disable)
     external-disable
     ;;
   *)
     # toggle
-    # turn off external monitor if disconnected
-    if (xrandr | grep "$EXT disconnected"); then
-      xrandr --output $EXT --off
+    if [ "$COUNT" -eq 1 ]; then
+      # if status is empty it's disabled: enable external monitor
+      external-enable
     else
-      if [ "$COUNT" -eq 1 ]; then
-        # if status is empty it's disabled: enable external monitor
-        external-enable
-      else
-        # status is not empty it's enabled: disable external monitor
-        external-disable
-      fi
+      # status is not empty it's enabled: disable external monitor
+      external-disable
     fi
     ;;
 esac
