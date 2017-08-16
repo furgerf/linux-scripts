@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# switch between 1-monitor- and 2-monitor-mode using screenlayouts
+LAYOUT_NONE="$HOME/.screenlayout/none.sh"
+LAYOUT_VGA="$HOME/.screenlayout/vga.sh"
+LAYOUT_HDMI="$HOME/.screenlayout/hdmi.sh"
+
+# get the number of available/active screens
+AVAILABLE_COUNT=$(xrandr | grep -E -c '\bconnected')
+ACTIVE_COUNT=$(xrandr | grep -c '\*')
+
+if [ "$AVAILABLE_COUNT" -eq 1 ]; then
+  # there's only one screen available
+  bash -c "$LAYOUT_NONE"
+elif [ "$ACTIVE_COUNT" -gt 1 ]; then
+  # there's currently more than one screen active
+  bash -c "$LAYOUT_NONE"
+elif xrandr | grep 'VGA1 connected' > /dev/null; then
+  # VGA monitor is connected but not active
+  bash -c "$LAYOUT_VGA"
+elif xrandr | grep 'HDMI1 connected' > /dev/null; then
+  # HDMI monitor is connected but not active
+  bash -c "$LAYOUT_HDMI"
+else
+  # must be some unknown monitor connected...
+  UNKNOWN_MONITOR=$(xrandr | grep '\bconnected' | grep -v LVDS1 | cut -d ' ' -f 1 | tr '\n' ' ')
+  notify-send "Unknown monitor connected: $UNKNOWN_MONITOR"
+  bash -c "$LAYOUT_NONE"
+fi
+
