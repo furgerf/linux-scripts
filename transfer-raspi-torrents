@@ -9,6 +9,9 @@ MV_CMD_NAMES=('MV' 'RSYNC')
 # case-insensitive bash-wildcard-expansion
 shopt -s nocaseglob
 
+find $RASPI_TORRENTS -maxdepth 0 ! -name "$TEMP_DIRECTORY_NAME" -exec basename {} \;
+echo ""
+
 # get number of matching files, excluding temp (if it matches)
 FILE_COUNT=$(ls -ld $RASPI_TORRENTS | wc -l)
 # shellcheck disable=SC2086
@@ -17,7 +20,7 @@ if echo $RASPI_TORRENTS | grep "$TEMP_DIRECTORY_NAME" -q ; then
   ((FILE_COUNT--))
 fi
 
-echo "Found $FILE_COUNT files that match and could be transferred."
+echo "Found $FILE_COUNT files that match and could be transferred..."
 
 for torrent in $RASPI_TORRENTS;
 do
@@ -29,7 +32,8 @@ do
   # determine whether or not to use rsync:
   # - use mv if the torrent is a directory and has subdirectories
   # - use rsync if the torrent has no subdirectories (or is no directory)
-  [ "$(find "$torrent" -type d | wc -l)" -gt 1 ]
+  DIRECTORY_COUNT=$(find "$torrent" -type d | wc -l)
+  [ "$DIRECTORY_COUNT" -gt 1 ]
   mv_cmd_index=$?
 
   echo "Use ${MV_CMD_NAMES[$mv_cmd_index]} to move \`$file\`?"
@@ -42,13 +46,14 @@ do
     if  [ $mv_cmd_index -eq 0 ]; then
       mv "$torrent" $LOCAL_TORRENTS_DIR
     else
-      rsync -avz --progress --remove-source-files "$torrent" $LOCAL_TORRENTS_DIR \
-        && rmdir "$torrent"
+      rsync -avz --progress --remove-source-files "$torrent" $LOCAL_TORRENTS_DIR
+      [ "$DIRECTORY_COUNT" -eq 1 ] && rmdir "$torrent"
     fi
 
     echo "... done!"
   fi
 done
 
-echo Done processing files!
+echo ""
+echo "... done processing files!"
 

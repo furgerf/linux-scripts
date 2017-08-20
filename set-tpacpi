@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# sets the TP battery thresholds if unsed
+# sets the TP battery thresholds if unset
 
 isset=$(sudo tpacpi-bat -g SP 1 | cut -d ' ' -f 1)
 
