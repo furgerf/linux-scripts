@@ -1,12 +1,17 @@
 #!/bin/bash
 
-# check whether ac is connected
-acpi -a | grep on > /dev/null
+(acpi -a | grep on > /dev/null)
+BATTERY=$?
+BRIGHTNESS=$(xbacklight -get | xargs printf "%.0f") # use printf for rounding
 
-# set backlight accordingly
-if [ $? -eq 0 ]; then
-    xbacklight -set 100 -time 0
+if [[ $BATTERY -eq 0 && $BRIGHTNESS -ne 100 ]]; then
+  # set backlight to 100 when we're not on battery and when brightness isn't 100
+  xbacklight -set 100 -time 0
+elif [[ $BATTERY -eq 1 && $BRIGHTNESS -ne 30 ]]; then
+  # set backlight to 30 when we're on battery and when brightness isn't 30
+  xbacklight -set 30 -time 0
 else
-    xbacklight -set 30 -time 0
+  # set backlight to 0
+  xbacklight -set 0 -time 0
 fi
 
