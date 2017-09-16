@@ -1,9 +1,15 @@
 #!/bin/bash
 
-modified=$(stat "$HOME/.cron_history" | grep 'Modify' | cut -d ' ' -f 2)
+if [ -z "$1" ]; then
+  CRON_LOG="/var/log/cron-history"
+else
+  CRON_LOG=$1
+fi
+
+modified=$(stat "$CRON_LOG" | grep 'Modify' | cut -d ' ' -f 2)
 today=$(date +%Y-%m-%d)
 
 if [[ "$modified" != "$today" ]]; then
-    echo "-----------------------------------------------------------------------------------------------------" >> "$HOME/.cron_history"
+    echo "-----------------------------------------------------------------------------------------------------" >> "$CRON_LOG"
 fi
 

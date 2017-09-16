@@ -4,8 +4,10 @@ if [ -r "$HOME/.dbus/Xdbus" ]; then
     . "$HOME/.dbus/Xdbus"
 fi
 
+LOG="/var/log/cron-history"
+
 # ensure new-day has been run
-new-day
+new-day $LOG
 
 # execute command and store command output
 "$@" 1> /tmp/out 2> /tmp/err
@@ -14,7 +16,6 @@ new-day
 OUT=$(cat /tmp/out)
 ERR=$(cat /tmp/err)
 DATE=$(date "+%A, %B %d, %Y [%T]")
-LOG="/var/log/cron-history"
 
 # update .cron history
 echo "*** $DATE $*" >> $LOG
