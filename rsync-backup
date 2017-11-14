@@ -1,0 +1,48 @@
+#!/bin/bash
+
+SRC=${1:-'/home /etc /data'}
+DEST=${2:-'raspi:/media/1.5tb/arch-backup'}
+LOG="/var/log/backup.log"
+EXCLUDE_LARGE=(/home/fabian/gPodder /data/{audio,video,torrents,Dropbox})
+EXCLUDE_CACHE=(/home/fabian/{.npm,.cache} node_modules/ venv/ __pycache__/)
+EXCLUDE_SECRET_DIRS=(/etc/{docker/,cups/ssl/,pacman.d/gnupg/,polkit-1/rules.d/,samba/private/,sudoers.d/,vmware/ssl/})
+EXCLUDE_SECRET_FILES=(/etc/{crypttab,dhcpcd.secret,gshadow*,shadow*,sudoers,cups/printers.conf*,ssh/ssh_host_*})
+EXCLUDE=("${EXCLUDE_LARGE[@]}" "${EXCLUDE_SECRET_DIRS[@]}" "${EXCLUDE_SECRET_FILES[@]}" "${EXCLUDE_CACHE[@]}")
+EX='--exclude='
+join () { local IFS="$1"; shift; echo "$*"; }
+log () { echo -e "$(date "+%Y/%m/%d %T") $1" | tee --append "$LOG"; }
+
+if ! ping raspi -c 1 -w 1 &> /dev/null; then
+  log "Aborting backup because there's no connection to raspi"
+  exit 1
+fi
+
+VERBOSE='-v'
+ARCHIVE='-a' # -r (recursive), -l (preserve symlinks), -p (preserve permissions), -t (), -g (preserve group), -o (preserve owner), -D (presere devices and special files)
+TIME='-t' # (preserve modification time)
+# PREALLOC='--preallocate'
+# DRYRUN='-n'
+APPEND='--append'
+# WHOLEFILE='-W'
+DELETE='--delete --force' # delete extra files on dest and force delete non-empty dirs
+COMPRESS='-z'
+SPACES='-s' # no space splitting in paths
+STATS='--stats -h' # stats which are human readable
+PROGRESS='--progress'
+LOGCMD="--log-file=$LOG"
+# TMPDIR="--temp-dir=/tmp/rsync"
+EXCLUDECMD=$(join '⋄' "${EXCLUDE[@]}") # assuming ⋄ isn't part of any file name...
+EXCLUDECMD=$EX${EXCLUDECMD//⋄/ $EX}
+# ICONV='--iconv=utf8,iso88591'
+OPTIONS="$ARCHIVE $APPEND $TIME $DELETE $COMPRESS $SPACES $EXCLUDECMD $PREALLOC $TMPDIR $VERBOSE $STATS $PROGRESS $LOGCMD"
+
+echo '' >> "$LOG"
+log "########## Starting backup of $SRC to $DEST... ##########"
+log "Command: 'rsync $OPTIONS $SRC $DEST'"
+
+# shellcheck disable=SC2086
+rsync $OPTIONS $SRC $DEST
+
+DURATION=$SECONDS
+log "########## ... finished backup! $((DURATION / 60)) minutes and $((DURATION % 60)) seconds elapsed. ##########"
+
