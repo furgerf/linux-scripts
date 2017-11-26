@@ -1,0 +1,53 @@
+#!/bin/bash
+
+BACKUP=${1:-'/media/1.5tb/arch-backup'}
+COUNT=${2:-'3'}
+LOG="/var/log/backup.log"
+log () { echo -e "$(date "+%Y/%m/%d %T") $1" | tee --append "$LOG"; }
+backup-name () { echo "$BACKUP.$1"; }
+
+OLDEST_BACKUP=$(backup-name 1)
+for i in $(seq 1 "$COUNT"); do
+  CURRENT="$(backup-name "$i")"
+  if [ ! -d "$CURRENT" ]; then
+    log "No rotated backup number $i found, creating it"
+    mkdir "$CURRENT"
+    # mark the new directory as "oldest" so that the current backup is rotated there
+    OLDEST_BACKUP=$CURRENT
+    break
+  else
+    if [ "$CURRENT" -ot "$OLDEST_BACKUP" ]; then
+      OLDEST_BACKUP=$CURRENT
+    fi
+  fi
+done
+
+log "########## Rotating current backup to: $OLDEST_BACKUP... ##########"
+
+VERBOSE='-v'
+ARCHIVE='-a' # -r (recursive), -l (preserve symlinks), -p (preserve permissions), -t (), -g (preserve group), -o (preserve owner), -D (presere devices and special files)
+TIME='-t' # (preserve modification time)
+# PREALLOC='--preallocate'
+# DRYRUN='-n'
+APPEND='--append'
+# WHOLEFILE='-W'
+DELETE='--delete --force' # delete extra files on dest and force delete non-empty dirs
+COMPRESS='-z'
+SPACES='-s' # no space splitting in paths
+STATS='--stats -h' # stats which are human readable
+PROGRESS='--progress'
+LOGCMD="--log-file=$LOG"
+# TMPDIR="--temp-dir=/tmp/rsync"
+# EXCLUDECMD=$(join '⋄' "${EXCLUDE[@]}") # assuming ⋄ isn't part of any file name...
+# EXCLUDECMD=$EX${EXCLUDECMD//⋄/ $EX}
+# ICONV='--iconv=utf8,iso88591'
+OPTIONS="$ARCHIVE $APPEND $TIME $DELETE $COMPRESS $SPACES $PREALLOC $TMPDIR $VERBOSE $STATS $PROGRESS $LOGCMD"
+
+# shellcheck disable=SC2086
+rsync $OPTIONS $BACKUP/ $OLDEST_BACKUP
+touch "$OLDEST_BACKUP"
+date > "$OLDEST_BACKUP/backup-date"
+
+DURATION=$SECONDS
+log "########## ... finished rotating backup! $((DURATION / 60)) minutes and $((DURATION % 60)) seconds elapsed. ##########"
+
