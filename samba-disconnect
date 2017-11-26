@@ -1,8 +1,8 @@
 #!/bin/bash
 
-umount -f /mnt/alarmpi/home
-umount -f /mnt/alarmpi/1tb
-umount -f /mnt/alarmpi/1.5tb
-umount -f /mnt/alarmpi/2tb
+sudo umount -f /mnt/alarmpi/home
+sudo umount -f /mnt/alarmpi/1tb
+sudo umount -f /mnt/alarmpi/1.5tb
+sudo umount -f /mnt/alarmpi/2tb
 
 exit 0
