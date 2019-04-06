@@ -3,5 +3,5 @@
 # toggles compton
 # this is required because it is mapped to a key in awesome
 # but using the command directly doesn't work
-killall compton || compton --backend glx --paint-on-overlay --vsync opengl-swc -fb -D3
+killall compton || compton -fb -D3
 

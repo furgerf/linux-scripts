@@ -6,6 +6,9 @@ TEMP_DIRECTORY_NAME="temp"
 
 MV_CMD_NAMES=('MV' 'RSYNC')
 
+echo Connecting to Samba shares
+samba-connect
+
 # case-insensitive bash-wildcard-expansion
 shopt -s nocaseglob
 
@@ -56,4 +59,7 @@ done
 
 echo ""
 echo "... done processing files!"
+
+echo Disconnecting from Samba shares
+samba-disconnect
 

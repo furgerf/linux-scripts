@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+START=$1
+DIR=${2:-/data/audio/music}
+UPDATED_FILE=${3:-/data/audio/updated-music.txt}
+STARTED=false
+
+box ()
+{
+  t="$1xxxx";
+  c=${2:-#};
+  echo "${t//?/$c}";
+  echo "$c $1 $c";
+  echo "${t//?/$c}"
+}
+
+for ARTIST_DIR in "$DIR"/*; do
+  ARTIST=$(basename "$ARTIST_DIR")
+  # check if we've started yet
+  if ! "$STARTED"; then
+    # we haven't started, but might want to start now
+    if [[ $(echo "$ARTIST" | tr '[:upper:]' '[:lower:]') == \
+      *$(echo "$START" | tr '[:upper:]' '[:lower:]')* ]]; then
+      STARTED=true
+    else
+      # we haven't started and don't want to
+      continue
+    fi
+  fi
+
+  # check if we want to process $ARTIST
+  box "$ARTIST"
+  ls -1 "$ARTIST_DIR" | tr -d "'"
+  echo
+  read -e -r -p "Process $ARTIST? " ANSWER
+  if [[ $(echo "$ANSWER" | tr '[:upper:]' '[:lower:]') != "y" ]]; then
+    echo "... skipping $ARTIST"
+    echo
+    continue
+  fi
+
+  BROWSER=$(command -v xdg-open || command -v gnome-open) ||
+    {
+      echo "No browser found, aborting!"
+      exit 1
+    }
+  "$BROWSER" "https://en.wikipedia.org/wiki/$ARTIST" 2> /dev/null
+
+  read -e -r -p "Mark $ARTIST as updated? " -i "y" ANSWER
+  if [[ $(echo "$ANSWER" | tr '[:upper:]' '[:lower:]') == "y" ]]; then
+    echo "$(date "+%A, %B %d, %Y [%T]") $ARTIST" >> "$UPDATED_FILE"
+  fi
+  echo
+done
+

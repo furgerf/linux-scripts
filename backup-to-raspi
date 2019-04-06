@@ -4,9 +4,9 @@ SRC=${1:-'/home /etc /data'}
 DEST=${2:-'raspi:/media/1.5tb/arch-backup'}
 LOG="/var/log/backup.log"
 EXCLUDE_LARGE=(/home/fabian/gPodder /data/{audio,video,torrents,Dropbox})
-EXCLUDE_CACHE=(/home/fabian/{.npm,.cache} node_modules/ venv/ __pycache__/)
-EXCLUDE_SECRET_DIRS=(/etc/{docker/,cups/ssl/,pacman.d/gnupg/,polkit-1/rules.d/,samba/private/,sudoers.d/,vmware/ssl/,NetworkManager/system-connections/})
-EXCLUDE_SECRET_FILES=(/etc/{crypttab,dhcpcd.secret,gshadow*,shadow*,sudoers,cups/printers.conf*,ssh/ssh_host_*,.pwd.lock})
+EXCLUDE_CACHE=(/home/fabian/{.npm,.cache,.mozilla/firefox/} node_modules/ venv/ __pycache__/)
+EXCLUDE_SECRET_DIRS=(/etc/{docker/,cups/ssl/,pacman.d/gnupg/,polkit-1/rules.d/,samba/private/,sudoers.d/,vmware/ssl/,NetworkManager/system-connections/,audisp})
+EXCLUDE_SECRET_FILES=(/etc/{crypttab,dhcpcd.secret,gshadow*,shadow*,sudoers,cups/printers.conf*,ssh/ssh_host_*,.pwd.lock,libaudit.conf})
 EXCLUDE=("${EXCLUDE_LARGE[@]}" "${EXCLUDE_SECRET_DIRS[@]}" "${EXCLUDE_SECRET_FILES[@]}" "${EXCLUDE_CACHE[@]}")
 EX='--exclude='
 join () { local IFS="$1"; shift; echo "$*"; }
