@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+UPDATES=$(checkupdates)
+
+if [ -n "$UPDATES" ]; then
+  echo "$(echo "$UPDATES" | wc -l) updates are available:"
+  echo "$UPDATES" | sed 's/^/  /'
+fi
+

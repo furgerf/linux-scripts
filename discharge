@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+FILE=/tmp/discharge
+TIME_NOW=$(date +%s)
+
+START_TIME=$(date -d '-15min' +%s) # only consider entries less than 15 minutes old
+MAX_DT=300 # only consider updates less than 5 minutes apart
+
+case "$1" in
+  update)
+    # this is meant to be called by udev with the corresponding environment variables set
+    if [[ "$POWER_SUPPLY_STATUS" == "Charging" ]]; then
+      # we're charging - discard all previous entries
+      > "$FILE"
+      exit 0
+    elif [[ "$POWER_SUPPLY_STATUS" == "Discharging" ]]; then
+      # we're discharging - add a new entry
+      echo "$TIME_NOW $POWER_SUPPLY_CHARGE_NOW" >> "$FILE"
+    fi
+    ;;
+  *)
+    if [[ "$(cat /sys/class/power_supply/BAT0/status)" != "Discharging" ]]; then
+      exit
+    fi
+    SUM=0
+    COUNT=0
+    PREV_T=
+    PREV_C=
+    while IFS= read -r LINE; do
+      IFS=" " read -r -a SPLIT <<< "$LINE"
+      T="${SPLIT[0]}"
+      C="${SPLIT[1]}"
+      DT=$((T - PREV_T))
+      DC=$((PREV_C - C))
+
+      # perform update if
+      # - there's a previous charge level
+      # - the charge level has changed since last time
+      # - we are within the time range we consider
+      # - the time between the two steps isn't too big (e.g. due to system suspend)
+      if [[ -n "$PREV_C" && "$C" != "$PREV_C" && "$T" -gt "$START_TIME" && "$DT" -lt "$MAX_DT" ]]; then
+        RATE=$((DC / DT))
+        SUM=$((SUM + (TIME_NOW-T) * RATE))
+        COUNT=$((COUNT + (TIME_NOW-T)))
+      fi
+
+      # reset statistics if the charge _increased_
+      if (( PREV_C < C )); then
+        SUM=0
+        COUNT=0
+      fi
+
+      PREV_T="$T"
+      PREV_C="$C"
+    done < "$FILE"
+
+    if (( COUNT == 0 )); then
+      echo "?"
+      exit
+    fi
+
+    AVG=$((SUM / COUNT))
+    CHARGE=$(cat /sys/class/power_supply/BAT0/charge_now)
+    TIME=$((CHARGE / AVG))
+    FORMAT=${1:-%H:%M}
+    date -d@$TIME -u +"$FORMAT"
+    ;;
+esac
+

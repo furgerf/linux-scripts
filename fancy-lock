@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+LOCK_SCREEN="$(mktemp /tmp/XXXXXXXXXX.png)"
+logger "Locking session"
+
+xfce4-screenshooter -f -s "$LOCK_SCREEN"
+WIDTH=$(file $LOCK_SCREEN | awk '{print $5}')
+HEIGHT=$(file $LOCK_SCREEN | awk '{print $7}' | tr -d ',')
+# convert "$LOCK_SCREEN" -blur 0x9 "$LOCK_SCREEN"
+convert "$LOCK_SCREEN" -scale 8% -scale 1250% -resize "${WIDTH}x${HEIGHT}!" "$LOCK_SCREEN"
+i3lock --image="$LOCK_SCREEN" --nofork --ignore-empty-password --show-failed-attempts --tiling
+
+rm "$LOCK_SCREEN"
+
