@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CMD="$1"
+
 (acpi -a | grep on > /dev/null)
 BATTERY=$?
 BRIGHTNESS=$(xbacklight -get | xargs printf "%.0f") # use printf for rounding
@@ -7,10 +9,10 @@ BRIGHTNESS=$(xbacklight -get | xargs printf "%.0f") # use printf for rounding
 if [[ $BATTERY -eq 0 && $BRIGHTNESS -ne 100 ]]; then
   # set backlight to 100 when we're not on battery and when brightness isn't 100
   xbacklight -set 100 -time 0
-elif [[ $BATTERY -eq 1 && $BRIGHTNESS -ne 30 ]]; then
+elif [[ $BATTERY -eq 1 && $BRIGHTNESS -ne 50 ]]; then
   # set backlight to 30 when we're on battery and when brightness isn't 30
-  xbacklight -set 30 -time 0
-else
+  xbacklight -set 50 -time 0
+elif [[ "$CMD" != "on" ]]; then
   # set backlight to 0
   xbacklight -set 0 -time 0
 fi

@@ -3,7 +3,7 @@
 # switch between 1-monitor- and 2-monitor-mode
 
 # get names and number of currently enabled outputs
-IN="LVDS1"
+IN="eDP1"
 EXT="$(xrandr | egrep '\bconnected' | cut -d' ' -f1 | grep -v "$IN" | head -n 1)"
 ENABLED=$(xrandr | grep "\*" | cut -d' ' -f1)
 COUNT=$(xrandr | grep -c "\*")
@@ -16,14 +16,19 @@ for out in $ENABLED; do
 done
 
 external-enable () {
-  xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect" --pos 0x1085 \
-    --output "$EXT" --auto
+  if [ "z$EXT" == "z" ]; then
+    notify-send "No external monitor available"
+    return
+  fi
+  xrandr --output "$EXT" --auto --above "$IN"
+  notify-send "Enabled external monitor $EXT"
 }
 external-disable () {
-  xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect" \
-    --output "$EXT" --off
+  xrandr --output "$EXT" --off
+  notify-send "Disabled external monitor $EXT"
 }
 
+xrandr --output "$IN" --auto --primary --set "scaling mode" "Full aspect"
 case $1 in
   enable)
     external-enable
