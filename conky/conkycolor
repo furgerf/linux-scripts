@@ -8,7 +8,9 @@ color1="$1"
 color2="$2"
 value="$5"
 value=$(eval "$value")
-part=$((100 * (value - $3) / ($4 - $3)))
+# calculate percentage with floats but then trim decimal so that bash doesn't complain
+part=$(calc "100 * ($value - $3) / ($4 - $3)" | tr -d [:space:] | tr -d \~)
+part="${part%.*}"
 
 if [[ $part -gt 100 ]]; then
     part=100
